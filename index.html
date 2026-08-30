@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Мой Проект</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#FF6B6B">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Мой Проект">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" href="icons/icon-192.png">
+
+<style>
+  :root {
+    --bg: #F9F9FB;
+    --text-primary: #1A1A1A;
+    --text-secondary: #6C7A89;
+    --text-tertiary: #B0BEC5;
+    --accent-start: #FF6B6B;
+    --accent-end: #FF8E53;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin:0; padding:0; height:100%; overscroll-behavior:none;
+    background:var(--bg);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;
+  }
+  #app { position:fixed; inset:0; width:100%; height:100dvh; min-height:100dvh; background:var(--bg); display:flex; flex-direction:column; overflow:hidden; transition: background .3s ease-in-out; }
+  @supports not (height: 100dvh) { #app { height:100vh; min-height:100vh; } }
+  #screens { flex:1; position:relative; overflow:hidden; }
+  .screen { position:absolute; inset:0; overflow-y:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none; padding-top:calc(var(--safe-top) + 20px); padding-bottom:calc(var(--safe-bottom) + 110px); opacity:0; pointer-events:none; transform:translateY(6px); transition:opacity .3s ease-in-out, transform .3s ease-in-out; }
+  .screen::-webkit-scrollbar{display:none;}
+  .screen.active{ opacity:1; pointer-events:auto; transform:translateY(0); }
+  h1,h2,h3,p{margin:0;}
+  .px{padding-left:20px; padding-right:20px;}
+  .title{font-size:22px; font-weight:600; color:var(--text-primary);}
+  .caption{font-size:13px; font-weight:300; color:var(--text-secondary); margin-top:4px;}
+  .avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(90deg,var(--accent-start),var(--accent-end));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:16px;border:none;cursor:pointer;flex-shrink:0;}
+  .glass{background:rgba(255,255,255,.55); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,.3); border-radius:20px; box-shadow:0 8px 24px rgba(0,0,0,.06);}
+  .section-label{font-size:14px; font-weight:600; color:var(--text-primary); margin:20px 0 10px;}
+  .progress-track{height:10px;border-radius:5px;background:rgba(176,190,197,.3);overflow:hidden;}
+  .progress-fill{height:100%;border-radius:5px;background:linear-gradient(90deg,var(--accent-start),var(--accent-end));transition:width .3s ease-in-out;}
+  .progress-caption{font-size:12px;font-weight:300;color:var(--text-secondary);margin-top:8px;}
+  .task-group-label{font-size:12px;font-weight:300;color:var(--text-secondary);padding:0 20px;margin-bottom:6px;}
+  .task-card{margin:0 20px 14px;overflow:hidden;}
+  .task-row{display:flex;align-items:center;gap:12px;padding:12px 16px; cursor:pointer;}
+  .task-row+.task-row{border-top:.5px solid rgba(176,190,197,.35);}
+  .task-row[draggable=true]{cursor:grab;}
+  .checkbox{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--text-tertiary);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .2s ease-in-out;background:transparent;}
+  .checkbox.done{border-color:transparent;background:linear-gradient(90deg,var(--accent-start),var(--accent-end));}
+  .checkbox svg{width:12px;height:12px;opacity:0;transform:scale(.5);transition:all .2s ease-in-out;}
+  .checkbox.done svg{opacity:1;transform:scale(1);}
+  .task-title{font-size:15px;color:var(--text-primary);}
+  .task-title.done{color:var(--text-tertiary);text-decoration:line-through;}
+  .task-time{font-size:12px;font-weight:300;color:var(--text-secondary);margin-top:2px;}
+  .task-meta{display:flex;gap:6px;align-items:center;margin-top:2px;}
+  .fab{position:fixed;right:20px;bottom:calc(var(--safe-bottom) + 96px);width:56px;height:56px;border-radius:50%;background:linear-gradient(90deg,var(--accent-start),var(--accent-end));border:none;color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(255,107,107,.45);cursor:pointer;z-index:20;}
+  #tabbar{position:fixed;left:0;right:0;bottom:0;width:100%;height:calc(64px + var(--safe-bottom));padding-bottom:var(--safe-bottom);background:rgba(249,249,251,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-top:.5px solid rgba(176,190,197,.3);display:flex;z-index:100;transform:translateZ(0);will-change:transform;}
+  .tab{min-height:64px;}
+  .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:none;border:none;cursor:pointer;color:var(--text-tertiary);}
+  .tab svg{width:22px;height:22px;stroke:var(--text-tertiary);fill:none;stroke-width:1.5;}
+  .tab span{font-size:10px;font-weight:300;}
+  .tab.active{color:var(--accent-start);}
+  .tab.active svg{stroke:var(--accent-start);}
+  .empty{text-align:center;padding:40px 32px;}
+  .empty svg{width:34px;height:34px;stroke:var(--text-tertiary);stroke-width:1.5;fill:none;margin-bottom:12px;}
+  .empty h3{font-size:15px;font-weight:600;color:var(--text-primary);margin-bottom:6px;}
+  .empty p{font-size:13px;font-weight:300;color:var(--text-secondary);line-height:1.4;}
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.3);display:flex;align-items:flex-end;z-index:40;opacity:0;pointer-events:none;transition:opacity .3s ease-in-out;}
+  .modal-backdrop.open{opacity:1;pointer-events:auto;}
+  .modal-sheet{width:100%;max-width:520px;margin:0 auto;background:var(--bg);border-radius:24px 24px 0 0;padding:20px 20px calc(28px + var(--safe-bottom));transform:translateY(100%);transition:transform .3s ease-in-out;max-height:86%;overflow-y:auto;}
+  .modal-backdrop.open .modal-sheet{transform:translateY(0);}
+  .modal-title{font-size:17px;font-weight:600;color:var(--text-primary);margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;}
+  .field-label{font-size:12px;font-weight:300;color:var(--text-secondary);margin:14px 0 6px;}
+  input[type=text],input[type=search],select,input[type=date],input[type=time],textarea{width:100%;padding:11px 14px;border-radius:12px;border:1px solid rgba(176,190,197,.4);background:#fff;font-size:16px;color:var(--text-primary);font-family:inherit;}
+  textarea{resize:vertical;min-height:70px;}
+  .row2{display:flex;gap:10px;} .row2>*{flex:1;}
+  .priority-picker,.segmented{display:flex;gap:8px;margin-top:6px;}
+  .priority-dot,.segmented-item{flex:1;padding:9px 0;text-align:center;border-radius:10px;border:1px solid rgba(176,190,197,.4);font-size:13px;color:var(--text-secondary);cursor:pointer;}
+  .priority-dot.selected,.segmented-item.selected{border:none;color:#fff;background:linear-gradient(90deg,var(--accent-start),var(--accent-end));}
+  .toggle-row{display:flex;align-items:center;justify-content:space-between;margin-top:14px;}
+  .toggle-row .field-label{margin:0;}
+  .switch{position:relative;width:46px;height:26px;flex-shrink:0;}
+  .switch input{opacity:0;width:0;height:0;}
+  .slider-el{position:absolute;inset:0;background:rgba(176,190,197,.4);border-radius:13px;cursor:pointer;transition:.2s;}
+  .slider-el:before{content:"";position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.2s;}
+  input:checked+.slider-el{background:linear-gradient(90deg,var(--accent-start),var(--accent-end));}
+  input:checked+.slider-el:before{transform:translateX(20px);}
+  .modal-save{width:100%;margin-top:20px;padding:14px 0;border:none;border-radius:16px;background:linear-gradient(90deg,var(--accent-start),var(--accent-end));color:#fff;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;}
+  .modal-save.secondary{background:rgba(176,190,197,.25); color:var(--text-primary);}
+  .modal-save.danger{background:#FF3B30;}
+  .modal-save:disabled{opacity:.4;}
+  .icon-btn{width:32px;height:32px;border-radius:50%;border:none;background:rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+  .icon-btn svg{width:16px;height:16px;stroke:var(--text-primary);fill:none;stroke-width:2;}
+  .thought-input-row{display:flex;gap:8px;margin:0 20px 16px;}
+  .thought-input-row input{flex:1;}
+  .thought-save-btn,.chip-btn{padding:0 16px;border:none;border-radius:12px;background:linear-gradient(90deg,var(--accent-start),var(--accent-end));color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;height:40px;}
+  .thought-card{margin:0 20px 10px;padding:14px 16px;cursor:pointer;}
+  .thought-text{font-size:14px;color:var(--text-primary);}
+  .thought-date{font-size:11px;font-weight:300;color:var(--text-tertiary);margin-top:6px;}
+  .status-pill{font-size:11px;font-weight:300;color:var(--text-secondary);}
+  .heat-cell{width:12px;height:12px;border-radius:3px;}
+  .heat-grid{display:grid; grid-template-columns:repeat(14,12px); gap:3px;}
+
+  #workspaceOverlay{position:absolute; inset:0; background:var(--bg); z-index:50; display:flex; flex-direction:column; transform:translateY(100%); transition:transform .3s ease-in-out;}
+  #workspaceOverlay.open{transform:translateY(0);}
+  .ws-header{padding:calc(var(--safe-top) + 20px) 20px 0;}
+  .ws-tabs{display:flex; gap:8px; overflow-x:auto; padding:12px 20px; scrollbar-width:none;}
+  .ws-tabs::-webkit-scrollbar{display:none;}
+  .ws-tab{padding:8px 14px; border-radius:20px; font-size:13px; color:var(--text-secondary); background:rgba(255,255,255,.5); white-space:nowrap; cursor:pointer;}
+  .ws-tab.active{color:#fff; background:linear-gradient(90deg,var(--accent-start),var(--accent-end));}
+  .ws-body{flex:1; overflow-y:auto; padding-bottom:calc(var(--safe-bottom) + 40px);}
+
+  .mode-switcher{display:flex;gap:4px;padding:4px;background:rgba(255,255,255,.5);border-radius:20px;margin:0 20px;}
+  .mode-btn{flex:1;text-align:center;padding:8px 0;border-radius:16px;font-size:13px;color:var(--text-secondary);cursor:pointer;}
+  .mode-btn.active{color:#fff;background:linear-gradient(90deg,var(--accent-start),var(--accent-end));}
+  .planner-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 0;}
+  .planner-nav button{background:none;border:none;cursor:pointer;color:var(--text-primary);}
+  .week-strip{display:flex;gap:4px;padding:14px 20px 0;}
+  .day-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px 0;cursor:pointer;border-radius:12px;}
+  .day-col.drop-hover{background:rgba(255,107,107,.12);}
+  .day-num{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text-primary);}
+  .day-num.selected{background:linear-gradient(90deg,var(--accent-start),var(--accent-end));color:#fff;}
+  .day-num.today{background:rgba(255,255,255,.7);}
+  .day-dot-row{display:flex;gap:3px;height:5px;}
+  .day-dot{width:5px;height:5px;border-radius:50%;}
+  .month-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;padding:14px 20px 0;}
+  .month-weekday{font-size:11px;color:var(--text-tertiary);text-align:center;}
+  .month-day{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;}
+  .colordate-btn{margin:14px 20px 0;display:flex;align-items:center;gap:6px;color:var(--accent-start);font-size:13px;background:none;border:none;cursor:pointer;}
+
+  .wheel-card{margin:0 20px 14px;padding:10px 8px 8px;overflow:hidden;}
+  #wheelCanvas{width:100%;height:auto;min-height:260px;display:block;touch-action:manipulation;}
+  .sector-row{display:flex;flex-direction:column;gap:4px;margin-bottom:14px;}
+  .sector-row-top{display:flex;align-items:center;gap:8px;}
+  .sector-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  input[type=range]{width:100%; accent-color:var(--accent-start);}
+
+  .theme-row{display:flex;gap:14px;overflow-x:auto;padding:6px 20px 4px;scrollbar-width:none;}
+  .theme-row::-webkit-scrollbar{display:none;}
+  .theme-swatch{display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0;cursor:pointer;}
+  .theme-circle{width:36px;height:36px;border-radius:50%;position:relative;border:1px solid rgba(0,0,0,.08);}
+  .theme-circle.selected{box-shadow:0 0 0 2.5px var(--accent-start);}
+  .theme-circle .dot{position:absolute;width:10px;height:10px;border-radius:50%;bottom:-2px;right:-2px;}
+  .theme-name{font-size:10px;color:var(--text-secondary);}
+  .accent-row{display:flex;gap:12px;padding:6px 20px 4px;flex-wrap:wrap;}
+  .accent-swatch{width:30px;height:30px;border-radius:50%;cursor:pointer;border:2px solid transparent;}
+  .accent-swatch.selected{border-color:#333;}
+  .settings-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;}
+  .settings-row label{font-size:14px;color:var(--text-primary);}
+
+  .stat-row{display:flex;gap:16px;margin:0 20px;}
+  .stat-value{font-size:18px;font-weight:600;color:var(--text-primary);}
+  .stat-label{font-size:11px;font-weight:300;color:var(--text-secondary);}
+
+  .install-banner{position:absolute; left:12px; right:12px; z-index:70; display:none; align-items:center; gap:10px; padding:12px 14px; border-radius:16px;}
+  .install-banner.show{display:flex;}
+  .install-banner img{width:32px;height:32px;border-radius:8px;flex-shrink:0;}
+  .install-banner .txt{flex:1; font-size:12px; color:var(--text-primary); line-height:1.35;}
+  .install-banner button{border:none;background:none;color:var(--text-secondary);font-size:18px;cursor:pointer;padding:4px;}
+  #androidInstallBanner{top:calc(var(--safe-top) + 10px);}
+  #iosInstallBanner{bottom:calc(var(--safe-bottom) + 108px);}
+  .install-cta{background:linear-gradient(90deg,var(--accent-start),var(--accent-end));color:#fff;border:none;border-radius:10px;padding:7px 12px;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;}
+
+  /* Calm Premium redesign */
+  :root{
+    --surface:rgba(255,255,255,.72);
+    --surface-strong:rgba(255,255,255,.9);
+    --line:rgba(38,42,48,.075);
+    --shadow-soft:0 14px 40px rgba(28,31,36,.07);
+    --shadow-lift:0 18px 48px rgba(28,31,36,.10);
+  }
+  body{letter-spacing:-.01em;}
+  #app{background:radial-gradient(circle at 85% -5%, color-mix(in srgb,var(--accent-start) 10%, transparent), transparent 32%),var(--bg);}
+  .screen{padding-top:calc(var(--safe-top) + 18px);padding-bottom:calc(var(--safe-bottom) + 104px);}
+  .title{font-size:24px;letter-spacing:-.035em;font-weight:700;}
+  .caption{letter-spacing:0;font-size:12px;}
+  .glass{background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow-soft);backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);}
+  .avatar{width:42px;height:42px;background:var(--surface-strong);color:var(--text-primary);border:1px solid var(--line);box-shadow:0 8px 22px rgba(28,31,36,.08);font-weight:700;}
+  .icon-btn{background:rgba(255,255,255,.72);border:1px solid var(--line);box-shadow:0 6px 18px rgba(28,31,36,.05);}
+  .section-label{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--text-secondary);font-weight:700;margin-top:24px;}
+  .today-hero{margin:22px 20px 0;padding:22px;border-radius:28px;position:relative;overflow:hidden;box-shadow:var(--shadow-lift);}
+  .today-hero:after{content:"";position:absolute;width:150px;height:150px;border-radius:50%;right:-60px;top:-65px;background:var(--accent-start);opacity:.09;filter:blur(2px);}
+  .today-kicker{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--text-secondary);font-weight:700;}
+  .today-number{font-size:42px;line-height:1;font-weight:750;letter-spacing:-.06em;margin-top:7px;color:var(--text-primary);}
+  .today-number span{font-size:15px;letter-spacing:0;color:var(--text-secondary);font-weight:500;margin-left:5px;}
+  .hero-progress{height:8px;margin-top:18px;background:rgba(100,110,120,.12);border-radius:99px;}
+  .hero-progress .progress-fill{background:var(--text-primary);}
+  .hero-foot{display:flex;justify-content:space-between;align-items:center;margin-top:9px;font-size:11px;color:var(--text-secondary);}
+  .task-card{border-radius:22px;margin-bottom:10px;}
+  .task-row{padding:14px 15px;gap:11px;}
+  .task-row+.task-row{border-top:1px solid var(--line);}
+  .checkbox{width:23px;height:23px;border-color:rgba(90,98,108,.28);}
+  .fab{width:58px;height:58px;right:18px;bottom:calc(var(--safe-bottom) + 82px);background:var(--text-primary);box-shadow:0 12px 28px rgba(28,31,36,.22);font-size:26px;z-index:110;}
+  #tabbar{height:calc(70px + var(--safe-bottom));padding-bottom:var(--safe-bottom);background:rgba(248,248,246,.78);border-top:1px solid var(--line);box-shadow:0 -8px 28px rgba(28,31,36,.04);}
+  .tab{min-height:70px;gap:5px;}
+  .tab svg{width:21px;height:21px;stroke-width:1.7;}
+  .tab span{font-size:10px;font-weight:600;}
+  .tab.active{color:var(--text-primary);}
+  .tab.active svg{stroke:var(--text-primary);}
+  .tab.active:after{content:"";width:4px;height:4px;border-radius:50%;background:var(--accent-start);position:absolute;bottom:calc(var(--safe-bottom) + 6px);}
+  .wheel-card{margin:0 20px 16px;padding:14px 8px 8px;border-radius:28px;box-shadow:var(--shadow-lift);}
+  #wheelCanvas{min-height:290px;}
+  .wheel-summary{display:flex;align-items:end;justify-content:space-between;margin:8px 20px 12px;}
+  .wheel-score{font-size:30px;line-height:1;font-weight:750;letter-spacing:-.05em;color:var(--text-primary);}
+  .wheel-score small{font-size:12px;letter-spacing:0;color:var(--text-secondary);font-weight:500;}
+  .wheel-tip{font-size:11px;color:var(--text-secondary);max-width:150px;text-align:right;line-height:1.35;}
+  .sector-row{padding:11px 0;border-bottom:1px solid var(--line);margin-bottom:0;}
+  .sector-row:last-child{border-bottom:0;}
+  .sector-row-top{gap:9px;}
+  .sector-dot{width:9px;height:9px;box-shadow:0 0 0 4px rgba(120,130,140,.06);}
+  input[type=range]{height:5px;}
+  .stat-row{margin:0 20px;padding:15px 16px;border-radius:20px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow-soft);justify-content:space-between;}
+  .stat-row>div{text-align:center;flex:1;}
+  .stat-row>div+div{border-left:1px solid var(--line);}
+  .stat-value{font-size:20px;letter-spacing:-.04em;}
+  .stat-label{margin-top:3px;}
+  .mode-switcher{background:rgba(120,130,140,.08);border:1px solid var(--line);}
+  .mode-btn.active{background:var(--text-primary);}
+  .planner-nav{padding-top:16px;}
+  .week-strip,.month-grid{padding-top:14px;}
+  .day-col{padding:8px 0;}
+  .day-num.selected{background:var(--text-primary);}
+  .day-num.today{background:rgba(255,255,255,.75);box-shadow:inset 0 0 0 1px var(--line);}
+  .modal-sheet{border-radius:28px 28px 0 0;box-shadow:0 -18px 50px rgba(28,31,36,.14);}
+  .modal-save{background:var(--text-primary);}
+  .thought-save-btn,.chip-btn{background:var(--text-primary);}
+  @media(max-width:520px){
+    .today-number{font-size:38px;}
+    .wheel-card{padding-left:3px;padding-right:3px;}
+  }
+  @media(min-width:700px){
+    #tabbar{left:50%;right:auto;transform:translateX(-50%);width:min(680px,100%);border-radius:22px 22px 0 0;}
+    .fab{right:max(24px,calc((100vw - 680px)/2 + 18px));}
+  }
+
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="androidInstallBanner" class="glass install-banner">
+    <img src="icons/icon-192.png" alt="">
+    <div class="txt">Установите «Мой Проект» на телефон — работает офлайн, как обычное приложение.</div>
+    <button class="install-cta" id="androidInstallBtn">Установить</button>
+    <button id="androidInstallClose" aria-label="Закрыть">&times;</button>
+  </div>
+  <div id="iosInstallBanner" class="glass install-banner">
+    <img src="icons/icon-192.png" alt="">
+    <div class="txt">Чтобы установить: нажмите <strong>Поделиться</strong> внизу Safari &rarr; <strong>«На экран «Домой»»</strong>.</div>
+    <button id="iosInstallClose" aria-label="Закрыть">&times;</button>
+  </div>
+
+  <div id="screens">
+
+    <div class="screen active" id="screen-today">
+      <div class="px" style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div><div class="title" id="greetingTitle">Привет!</div><div class="caption" id="greetingDate"></div></div>
+        <button class="avatar" id="avatarBtn">Г</button>
+      </div>
+      <div class="glass today-hero">
+        <div class="today-kicker">Фокус на сегодня</div>
+        <div class="today-number" id="dayProgressNumber">0<span>задач</span></div>
+        <div class="progress-track hero-progress"><div class="progress-fill" id="dayProgressFill" style="width:0%"></div></div>
+        <div class="hero-foot"><span id="dayProgressCaption">Выполнено 0 из 0 задач</span><span id="dayProgressPercent">0%</span></div>
+      </div>
+      <div class="section-label px">Мои задачи</div>
+      <div id="tasksContainer"></div>
+    </div>
+
+    <div class="screen" id="screen-projects">
+      <div class="px" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div class="title">Проекты</div>
+        <button class="icon-btn" id="newProjectBtn"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+      </div>
+      <div id="projectsContainer"></div>
+    </div>
+
+    <div class="screen" id="screen-planner">
+      <div class="px title" style="margin-bottom:12px;">Планер</div>
+      <div class="mode-switcher">
+        <div class="mode-btn active" data-mode="week">Неделя</div>
+        <div class="mode-btn" data-mode="month">Месяц</div>
+      </div>
+      <div class="planner-nav">
+        <button id="plannerPrev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+        <div class="caption" id="plannerHeader" style="margin:0;font-weight:600;color:var(--text-primary);"></div>
+        <button id="plannerNext"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
+      </div>
+      <div id="plannerCalendar"></div>
+      <button class="colordate-btn" id="colorDateBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+        Цветная дата
+      </button>
+      <div class="section-label px" id="plannerDayLabel"></div>
+      <div id="plannerDayTasks"></div>
+    </div>
+
+    <div class="screen" id="screen-analytics">
+      <div class="px title" style="margin-bottom:14px;">Аналитика</div>
+      <div class="px" style="display:flex;justify-content:space-between;align-items:center;">
+        <div class="section-label" style="margin:0;">Продуктивность</div>
+        <select id="heatmapProjectFilter" style="width:auto;padding:6px 10px;font-size:12px;"></select>
+      </div>
+      <div class="px" style="margin-top:10px;overflow-x:auto;"><div class="heat-grid" id="heatmapContainer"></div></div>
+      <div class="stat-row" style="margin-top:16px;">
+        <div><div class="stat-value" id="statTotal">0</div><div class="stat-label">Всего задач</div></div>
+        <div><div class="stat-value" id="statDone">0</div><div class="stat-label">Выполнено</div></div>
+        <div><div class="stat-value" id="statStreak">0</div><div class="stat-label">Лучшая серия</div></div>
+      </div>
+      <div class="px" style="display:flex;justify-content:space-between;align-items:center;margin-top:26px;">
+        <div><div class="section-label" style="margin:0;text-transform:none;letter-spacing:-.02em;font-size:19px;">Колесо баланса</div><div class="caption">Насколько ты довольна каждой сферой</div></div>
+        <button class="icon-btn" id="wheelEditBtn"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009.6 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 8.6a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>
+      </div>
+      <div class="wheel-summary"><div><div class="wheel-score" id="wheelAverage">0.0<small>/ 10</small></div><div class="caption">средний баланс</div></div><div class="wheel-tip">Потяни точку сектора прямо на колесе — или используй шкалы ниже.</div></div>
+      <div class="wheel-card glass"><canvas id="wheelCanvas" aria-label="Колесо баланса"></canvas></div>
+      <div class="px" id="wheelSliders"></div>
+    </div>
+
+    <div class="screen" id="screen-inbox">
+      <div class="px title" style="margin-bottom:16px;">Inbox</div>
+      <div class="thought-input-row">
+        <input type="text" id="thoughtInput" placeholder="Быстрая мысль…">
+        <button class="thought-save-btn" id="thoughtSaveBtn">Сохранить</button>
+      </div>
+      <div id="thoughtsContainer"></div>
+    </div>
+
+  </div>
+
+  <button class="fab" id="fabBtn">+</button>
+  <div id="tabbar"></div>
+
+  <div id="workspaceOverlay">
+    <div class="ws-header">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <button class="icon-btn" id="wsCloseBtn"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+        <button class="icon-btn" id="wsTemplateBtn" title="Сохранить как шаблон"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><path d="M20 21v-8a2 2 0 00-2-2H6a2 2 0 00-2 2v8M12 3v9M8 7l4-4 4 4"/></svg></button>
+      </div>
+      <div class="title" id="wsProjectName" style="margin-top:10px;"></div>
+      <div class="segmented" id="wsStatusPicker" style="margin-top:10px;"></div>
+    </div>
+    <div class="ws-tabs" id="wsTabs"></div>
+    <div class="ws-body" id="wsBody"></div>
+  </div>
+
+  <div class="modal-backdrop" id="quickAddModal">
+    <div class="modal-sheet">
+      <div class="modal-title"><span id="taskModalTitle">Новая задача</span></div>
+      <div class="field-label">Название</div>
+      <input type="text" id="taskTitleInput" placeholder="Что нужно сделать?">
+      <div class="field-label">Описание</div>
+      <textarea id="taskDescInput" placeholder="Необязательно"></textarea>
+      <div class="field-label">Проект</div>
+      <select id="taskProjectSelect"></select>
+      <div class="row2">
+        <div><div class="field-label">Дата</div><input type="date" id="taskDateInput"></div>
+        <div><div class="field-label">Время</div><input type="time" id="taskTimeInput"></div>
+      </div>
+      <div class="field-label">Важность</div>
+      <div class="priority-picker" id="priorityPicker"></div>
+      <div class="toggle-row"><div class="field-label">Повторять</div><label class="switch"><input type="checkbox" id="recurringToggle"><span class="slider-el"></span></label></div>
+      <div id="recurrenceRow" style="display:none;">
+        <div class="field-label">Периодичность</div>
+        <select id="recurrenceSelect">
+          <option value="daily">Ежедневно</option>
+          <option value="weekly">Еженедельно</option>
+          <option value="monthly">Ежемесячно</option>
+        </select>
+      </div>
+      <div class="toggle-row"><div class="field-label">Напомнить</div><label class="switch"><input type="checkbox" id="reminderToggle"><span class="slider-el"></span></label></div>
+      <div id="reminderRow" style="display:none;">
+        <div class="row2">
+          <div><div class="field-label">Дата</div><input type="date" id="reminderDateInput"></div>
+          <div><div class="field-label">Время</div><input type="time" id="reminderTimeInput"></div>
+        </div>
+      </div>
+
+      <div class="field-label" id="checklistLabel" style="display:none;">Чек-лист</div>
+      <div id="checklistContainer"></div>
+      <div class="row2" id="checklistAddRow" style="display:none;margin-top:6px;">
+        <input type="text" id="checklistNewInput" placeholder="Новый пункт">
+        <button class="chip-btn" id="checklistAddBtn" style="flex:0 0 auto;">+</button>
+      </div>
+
+      <button class="modal-save" id="taskSaveBtn" disabled>Создать</button>
+      <button class="modal-save danger" id="taskDeleteBtn" style="display:none;">Удалить задачу</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="noteModal">
+    <div class="modal-sheet">
+      <div class="modal-title"><span id="noteModalTitle">Новая заметка</span></div>
+      <div class="field-label">Заголовок</div>
+      <input type="text" id="noteTitleInput" placeholder="Необязательно">
+      <div class="field-label">Текст</div>
+      <textarea id="noteContentInput" style="min-height:120px;"></textarea>
+      <button class="modal-save" id="noteSaveBtn">Сохранить</button>
+      <button class="modal-save danger" id="noteDeleteBtn" style="display:none;">Удалить заметку</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="thoughtModal">
+    <div class="modal-sheet">
+      <div class="modal-title">Обработать</div>
+      <p class="caption" id="thoughtModalText" style="margin-bottom:10px;"></p>
+      <div class="segmented" id="thoughtActionPicker">
+        <div class="segmented-item selected" data-action="task">В задачу</div>
+        <div class="segmented-item" data-action="note">В заметку</div>
+        <div class="segmented-item" data-action="delete">Удалить</div>
+      </div>
+      <div id="thoughtProjectRow">
+        <div class="field-label">Проект</div>
+        <select id="thoughtProjectSelect"></select>
+      </div>
+      <div id="thoughtDateRow">
+        <div class="field-label">Дата</div>
+        <input type="date" id="thoughtDateInput">
+      </div>
+      <button class="modal-save" id="thoughtProcessBtn">Готово</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="newProjectModal">
+    <div class="modal-sheet">
+      <div class="modal-title">Новый проект</div>
+      <div class="field-label">Название</div>
+      <input type="text" id="newProjectNameInput">
+      <div class="field-label" id="newProjectAreaLabel">Сфера</div>
+      <select id="newProjectAreaSelect"></select>
+      <div class="field-label" id="newProjectTemplateLabel">Шаблон (необязательно)</div>
+      <select id="newProjectTemplateSelect"><option value="">Не использовать</option></select>
+      <button class="modal-save" id="newProjectSaveBtn">Создать</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="colorDateModal">
+    <div class="modal-sheet">
+      <div class="modal-title">Цветная дата</div>
+      <div class="field-label">Название</div>
+      <input type="text" id="colorDateTitleInput" placeholder="Например, «День рождения»">
+      <div class="field-label">Дата</div>
+      <input type="date" id="colorDateDateInput">
+      <div class="field-label">Цвет</div>
+      <div class="accent-row" id="colorDatePalette"></div>
+      <button class="modal-save" id="colorDateSaveBtn">Сохранить</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="wheelEditorModal">
+    <div class="modal-sheet">
+      <div class="modal-title">Секторы</div>
+      <div id="wheelEditorList"></div>
+      <button class="modal-save secondary" id="wheelAddSectorBtn">+ Добавить сектор</button>
+      <button class="modal-save" id="wheelEditorDoneBtn">Готово</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="settingsModal">
+    <div class="modal-sheet" style="max-height:92%;">
+      <div class="modal-title">Настройки<button class="icon-btn" id="settingsCloseBtn"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>
+      <div class="field-label">Имя</div>
+      <input type="text" id="settingsNameInput">
+      <div class="field-label">Тема</div>
+      <div class="theme-row" id="themeRow"></div>
+      <div class="field-label">Акцентный цвет</div>
+      <div class="accent-row" id="accentRow"></div>
+      <div class="row2" style="margin-top:8px;">
+        <input type="color" id="customAccentInput" style="height:40px;padding:2px;">
+      </div>
+      <div class="settings-row"><label>Начало недели с понедельника</label><label class="switch"><input type="checkbox" id="weekStartToggle" checked><span class="slider-el"></span></label></div>
+      <div class="field-label">Данные</div>
+      <button class="modal-save secondary" id="exportDataBtn">Экспортировать данные (JSON)</button>
+      <label class="modal-save secondary" style="display:block;text-align:center;margin-top:10px;cursor:pointer;">
+        Импортировать данные
+        <input type="file" id="importDataInput" accept="application/json" style="display:none;">
+      </label>
+      <button class="modal-save danger" id="resetDataBtn">Сбросить все данные</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var TABS = [
+    { id:'today', label:'Сегодня', icon:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>' },
+    { id:'projects', label:'Проекты', icon:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/>' },
+    { id:'planner', label:'Планер', icon:'<rect x="3" y="4" width="18" height="18" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/>' },
+    { id:'analytics', label:'Аналитика', icon:'<path d="M4 20V10M12 20V4M20 20v-7"/>' },
+    { id:'inbox', label:'Inbox', icon:'<path d="M3 8l2-4h14l2 4M3 8v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8M3 8h18M9 12a3 3 0 0 0 6 0"/>' }
+  ];
+
+  var THEMES = [
+    { name:'Light', bg:'#F9F9FB', t1:'#1A1A1A', t2:'#6C7A89', t3:'#B0BEC5', a1:'#FF6B6B', a2:'#FF8E53' },
+    { name:'Dark', bg:'#121214', t1:'#F5F5F7', t2:'#9AA5B1', t3:'#5C6672', a1:'#FF6B6B', a2:'#FF8E53' },
+    { name:'Coffee', bg:'#F5EDE4', t1:'#3B2A20', t2:'#8A7360', t3:'#C9B9A8', a1:'#C9822D', a2:'#E0A458' },
+    { name:'Slate', bg:'#EEF1F4', t1:'#2B3440', t2:'#667080', t3:'#AAB4C0', a1:'#5C7A99', a2:'#7FA8C9' },
+    { name:'Blossom', bg:'#FDF1F5', t1:'#3A1F2B', t2:'#9C6478', t3:'#E3B8C6', a1:'#FF6FA5', a2:'#FF9BC4' },
+    { name:'Sage', bg:'#F1F5EE', t1:'#2A3826', t2:'#6E8267', t3:'#B7C7AE', a1:'#6FA35C', a2:'#9BC489' },
+    { name:'Lavender', bg:'#F4F1FA', t1:'#2E2740', t2:'#756E92', t3:'#C3BBDD', a1:'#9B6BFF', a2:'#C77DFF' },
+    { name:'Terracotta', bg:'#FBF0EA', t1:'#402A1F', t2:'#8F6650', t3:'#DDBBA8', a1:'#D2673E', a2:'#E89468' },
+    { name:'Cement', bg:'#F0F0EF', t1:'#2B2B2A', t2:'#767671', t3:'#B8B8B2', a1:'#7A756B', a2:'#A6A096' }
+  ];
+  var ACCENT_PRESETS = [
+    { start:'#FF6B6B', end:'#FF8E53' }, { start:'#4A90D9', end:'#63C7E8' },
+    { start:'#4ECDC4', end:'#8FD9A8' }, { start:'#9B6BFF', end:'#C77DFF' },
+    { start:'#F5B942', end:'#FFD97D' }
+  ];
+  var PALETTE = ['#FF6B6B','#4ECDC4','#45B7D1','#96CEB4','#FFEAA7','#DDA0DD','#FF69B4','#FFB347'];
+  var LIFE_AREAS = [
+    { id:'la1', name:'Работа', icon:'briefcase', color:'#FF6B6B' },
+    { id:'la2', name:'Здоровье', icon:'heart', color:'#4ECDC4' },
+    { id:'la3', name:'Личное', icon:'person', color:'#45B7D1' }
+  ];
+
+  var STORAGE_KEY = 'moy-proekt-pwa-state-v1';
+
+  var state = {
+    projects: [
+      { id:'p1', name:'Запуск сайта', lifeAreaId:'la1', parentProjectId:null, status:'active', isTemplate:false },
+      { id:'p2', name:'Тренировки', lifeAreaId:'la2', parentProjectId:null, status:'active', isTemplate:false }
+    ],
+    tasks: [],
+    notes: [],
+    thoughts: [],
+    colorDates: [],
+    wheelSectors: [
+      { id:'w1', name:'Работа', color:'#FF6B6B', value:5 }, { id:'w2', name:'Здоровье', color:'#4ECDC4', value:5 },
+      { id:'w3', name:'Отдых', color:'#45B7D1', value:5 }, { id:'w4', name:'Развитие', color:'#96CEB4', value:5 },
+      { id:'w5', name:'Отношения', color:'#FFEAA7', value:5 }, { id:'w6', name:'Финансы', color:'#DDA0DD', value:5 },
+      { id:'w7', name:'Творчество', color:'#FF69B4', value:5 }, { id:'w8', name:'Среда', color:'#FFB347', value:5 }
+    ],
+    settings: { userName:'Гость', weekStartsOnMonday:true, themeName:'Light', accentStart:'#FF6B6B', accentEnd:'#FF8E53' }
+  };
+
+  function uid(prefix){ return (prefix||'id') + Date.now() + Math.floor(Math.random()*1000); }
+  function todayKey(){ return new Date().toISOString().slice(0,10); }
+  function escapeHtml(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+  function projectById(id){ return state.projects.find(function(p){ return p.id===id; }); }
+  function lifeAreaById(id){ return LIFE_AREAS.find(function(a){ return a.id===id; }); }
+  function checkSvg(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>'; }
+
+  function applyTheme(){
+    var root = document.documentElement.style;
+    var t = THEMES.find(function(x){ return x.name===state.settings.themeName; }) || THEMES[0];
+    root.setProperty('--bg', t.bg);
+    root.setProperty('--text-primary', t.t1);
+    root.setProperty('--text-secondary', t.t2);
+    root.setProperty('--text-tertiary', t.t3);
+    root.setProperty('--accent-start', state.settings.accentStart);
+    root.setProperty('--accent-end', state.settings.accentEnd);
+    var meta = document.querySelector('meta[name=theme-color]');
+    if (meta) meta.setAttribute('content', state.settings.accentStart);
+  }
+
+  function loadState(){
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) { Object.assign(state, JSON.parse(raw)); }
+      else seedIfEmpty();
+    } catch(e){ seedIfEmpty(); }
+    applyTheme();
+    render();
+  }
+  function saveState(){
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e){ console.error('save failed', e); }
+  }
+  function seedIfEmpty(){
+    if (state.tasks.length === 0) {
+      var t = todayKey();
+      state.tasks = [
+        { id:'t1', title:'Согласовать макет', description:'', projectId:'p1', isCompleted:false, dueDate:t+'T10:00', priority:4, isRecurring:false, recurrenceRule:null, reminderDate:null, seriesId:null, checklist:[] },
+        { id:'t2', title:'Пробежка 5км', description:'', projectId:'p2', isCompleted:false, dueDate:t+'T07:30', priority:3, isRecurring:true, recurrenceRule:'daily', reminderDate:null, seriesId:'s1', checklist:[{id:'c1',text:'Размяться',done:false},{id:'c2',text:'5 км',done:false}] }
+      ];
+    }
+  }
+
+  var currentTab = 'today';
+  var tabbar = document.getElementById('tabbar');
+  TABS.forEach(function(t){
+    var btn = document.createElement('button');
+    btn.className = 'tab' + (t.id==='today' ? ' active' : '');
+    btn.dataset.tab = t.id;
+    btn.innerHTML = '<svg viewBox="0 0 24 24">'+t.icon+'</svg><span>'+t.label+'</span>';
+    btn.addEventListener('click', function(){ showScreen(t.id); });
+    tabbar.appendChild(btn);
+  });
+  function showScreen(id){
+    currentTab = id;
+    document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+    document.getElementById('screen-'+id).classList.add('active');
+    document.querySelectorAll('.tab').forEach(function(b){ b.classList.toggle('active', b.dataset.tab===id); });
+    document.getElementById('fabBtn').style.display = (id==='today') ? 'flex' : 'none';
+    if (id==='planner') renderPlanner();
+    if (id==='analytics') renderAnalytics();
+  }
+
+  function renderToday(){
+    document.getElementById('greetingTitle').textContent = 'Привет, ' + state.settings.userName + '!';
+    document.getElementById('greetingDate').textContent = new Date().toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+    document.getElementById('avatarBtn').textContent = state.settings.userName.slice(0,1).toUpperCase();
+
+    var t = todayKey();
+    var todays = state.tasks.filter(function(task){ return (task.dueDate||'').slice(0,10)===t; });
+    var completed = todays.filter(function(x){return x.isCompleted;}).length;
+    var total = todays.length;
+    document.getElementById('dayProgressFill').style.width = (total?Math.round(completed/total*100):0)+'%';
+    document.getElementById('dayProgressCaption').textContent = 'Выполнено '+completed+' из '+total+' задач';
+    var pct=total?Math.round(completed/total*100):0;
+    var numEl=document.getElementById('dayProgressNumber'); if(numEl) numEl.innerHTML=completed+'<span>из '+total+' задач</span>';
+    var pctEl=document.getElementById('dayProgressPercent'); if(pctEl) pctEl.textContent=pct+'%';
+
+    var container = document.getElementById('tasksContainer');
+    if (!todays.length) {
+      container.innerHTML = '<div class="glass empty" style="margin:0 20px;"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l2.5 2.5L16 9"/></svg><h3>На сегодня задач нет</h3><p>Нажмите «+», чтобы добавить первую задачу.</p></div>';
+      return;
+    }
+    var groups = {};
+    todays.forEach(function(task){ var key = task.projectId||'none'; (groups[key]=groups[key]||[]).push(task); });
+    var html = '';
+    Object.keys(groups).forEach(function(key){
+      var proj = key!=='none' ? projectById(key) : null;
+      if (proj) html += '<div class="task-group-label">'+escapeHtml(proj.name)+'</div>';
+      html += '<div class="glass task-card">';
+      groups[key].forEach(function(task){ html += taskRowHtml(task); });
+      html += '</div>';
+    });
+    container.innerHTML = html;
+    wireTaskRows(container);
+  }
+
+  function taskRowHtml(task){
+    var time = task.dueDate ? new Date(task.dueDate).toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'}) : '';
+    var checklistBadge = task.checklist && task.checklist.length ? '<span class="status-pill">'+task.checklist.filter(function(c){return c.done;}).length+'/'+task.checklist.length+'</span>' : '';
+    return '<div class="task-row" data-task-id="'+task.id+'">' +
+      '<div class="checkbox '+(task.isCompleted?'done':'')+'" data-check-id="'+task.id+'">'+checkSvg()+'</div>' +
+      '<div style="flex:1;" data-open-id="'+task.id+'">' +
+        '<div class="task-title '+(task.isCompleted?'done':'')+'">'+escapeHtml(task.title)+'</div>' +
+        '<div class="task-meta">' + (time?'<div class="task-time">'+time+'</div>':'') + checklistBadge + '</div>' +
+      '</div></div>';
+  }
+  function wireTaskRows(root){
+    root.querySelectorAll('[data-check-id]').forEach(function(el){
+      el.addEventListener('click', function(e){
+        e.stopPropagation();
+        toggleTask(el.dataset.checkId);
+      });
+    });
+    root.querySelectorAll('[data-open-id]').forEach(function(el){
+      el.addEventListener('click', function(){ openTaskModal(el.dataset.openId); });
+    });
+  }
+  function toggleTask(id){
+    var task = state.tasks.find(function(x){return x.id===id;});
+    if (!task) return;
+    task.isCompleted = !task.isCompleted;
+    if (task.isCompleted && task.isRecurring) scheduleNextOccurrence(task);
+    saveState(); renderAll();
+  }
+  function scheduleNextOccurrence(task){
+    var due = new Date(task.dueDate);
+    var days = task.recurrenceRule==='weekly'?7:(task.recurrenceRule==='monthly'?30:1);
+    due.setDate(due.getDate()+days);
+    var seriesId = task.seriesId || uid('series');
+    task.seriesId = seriesId;
+    state.tasks.push({ id:uid('t'), title:task.title, description:task.description, projectId:task.projectId, isCompleted:false, dueDate:due.toISOString().slice(0,16), priority:task.priority, isRecurring:true, recurrenceRule:task.recurrenceRule, reminderDate:null, seriesId:seriesId, checklist:(task.checklist||[]).map(function(c){return {id:uid('c'),text:c.text,done:false};}) });
+  }
+
+  function renderProjects(){
+    var container = document.getElementById('projectsContainer');
+    var html = '';
+    LIFE_AREAS.forEach(function(area){
+      var projects = state.projects.filter(function(p){ return p.lifeAreaId===area.id && !p.parentProjectId; });
+      html += '<div class="section-label px" style="display:flex;align-items:center;gap:8px;"><span style="width:8px;height:8px;border-radius:50%;background:'+area.color+';display:inline-block;"></span>'+escapeHtml(area.name)+'</div>';
+      if (!projects.length) {
+        html += '<div class="px" style="font-size:13px;color:var(--text-tertiary);margin-bottom:12px;">Нет проектов</div>';
+      } else {
+        projects.forEach(function(p){ html += projectCardHtml(p, area.color); });
+      }
+    });
+    container.innerHTML = html;
+    container.querySelectorAll('[data-project-id]').forEach(function(el){
+      el.addEventListener('click', function(){ openWorkspace(el.dataset.projectId); });
+    });
+  }
+  function projectCardHtml(p, areaColor){
+    var tasks = state.tasks.filter(function(t){return t.projectId===p.id;});
+    var done = tasks.filter(function(t){return t.isCompleted;}).length;
+    var pct = tasks.length ? Math.round(done/tasks.length*100) : 0;
+    return '<div class="glass px" data-project-id="'+p.id+'" style="margin:0 20px 12px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;">' +
+      '<div style="width:4px;height:32px;border-radius:2px;background:'+areaColor+';"></div>' +
+      '<div style="flex:1;"><div style="font-size:15px;color:var(--text-primary);">'+escapeHtml(p.name)+'</div>' +
+      '<div class="progress-track" style="height:6px;margin-top:6px;"><div class="progress-fill" style="width:'+pct+'%;height:6px;"></div></div></div>' +
+      '<div class="status-pill">'+done+'/'+tasks.length+'</div></div>';
+  }
+
+  var wsCurrentProjectId = null;
+  var wsCurrentTab = 'tasks';
+  function openWorkspace(projectId){
+    wsCurrentProjectId = projectId;
+    wsCurrentTab = 'tasks';
+    renderWorkspace();
+    document.getElementById('workspaceOverlay').classList.add('open');
+  }
+  function closeWorkspace(){ document.getElementById('workspaceOverlay').classList.remove('open'); wsCurrentProjectId = null; renderAll(); }
+  document.getElementById('wsCloseBtn').addEventListener('click', closeWorkspace);
+  document.getElementById('wsTemplateBtn').addEventListener('click', function(){
+    var p = projectById(wsCurrentProjectId); if (!p) return;
+    p.isTemplate = !p.isTemplate; saveState();
+    alert(p.isTemplate ? 'Сохранено как шаблон' : 'Убрано из шаблонов');
+  });
+
+  function renderWorkspace(){
+    var p = projectById(wsCurrentProjectId); if (!p) return;
+    document.getElementById('wsProjectName').textContent = p.name;
+    var statuses = [['active','Активный'],['paused','На паузе'],['completed','Завершён']];
+    document.getElementById('wsStatusPicker').innerHTML = statuses.map(function(s){
+      return '<div class="segmented-item'+(p.status===s[0]?' selected':'')+'" data-status="'+s[0]+'">'+s[1]+'</div>';
+    }).join('');
+    document.querySelectorAll('#wsStatusPicker [data-status]').forEach(function(el){
+      el.addEventListener('click', function(){ p.status = el.dataset.status; saveState(); renderWorkspace(); });
+    });
+
+    var tabs = [['tasks','Задачи'],['notes','Заметки'],['subprojects','Подпроекты'],['stats','Статистика']];
+    document.getElementById('wsTabs').innerHTML = tabs.map(function(t){
+      return '<div class="ws-tab'+(wsCurrentTab===t[0]?' active':'')+'" data-wstab="'+t[0]+'">'+t[1]+'</div>';
+    }).join('');
+    document.querySelectorAll('[data-wstab]').forEach(function(el){
+      el.addEventListener('click', function(){ wsCurrentTab = el.dataset.wstab; renderWorkspace(); });
+    });
+
+    var body = document.getElementById('wsBody');
+    if (wsCurrentTab==='tasks') body.innerHTML = wsTasksHtml(p);
+    else if (wsCurrentTab==='notes') body.innerHTML = wsNotesHtml(p);
+    else if (wsCurrentTab==='subprojects') body.innerHTML = wsSubprojectsHtml(p);
+    else body.innerHTML = wsStatsHtml(p);
+    wireWorkspaceBody(body, p);
+  }
+  function wsTasksHtml(p){
+    var tasks = state.tasks.filter(function(t){return t.projectId===p.id;});
+    var html = '<div class="px"><button class="chip-btn" id="wsAddTaskBtn" style="width:100%;">+ Добавить задачу</button></div>';
+    if (!tasks.length) html += '<div class="empty"><h3>Нет задач</h3><p>Добавьте первую задачу проекта.</p></div>';
+    else { html += '<div class="glass task-card">'; tasks.forEach(function(t){ html += taskRowHtml(t); }); html += '</div>'; }
+    return html;
+  }
+  function wsNotesHtml(p){
+    var notes = state.notes.filter(function(n){return n.projectId===p.id;});
+    var html = '<div class="px"><button class="chip-btn" id="wsAddNoteBtn" style="width:100%;">+ Новая заметка</button></div>';
+    if (!notes.length) html += '<div class="empty"><h3>Нет заметок</h3><p>Заметки проекта появятся здесь.</p></div>';
+    else notes.forEach(function(n){
+      html += '<div class="glass px" data-note-id="'+n.id+'" style="margin:0 20px 12px;padding:14px 16px;cursor:pointer;">' +
+        (n.title?'<div style="font-weight:600;font-size:14px;color:var(--text-primary);">'+escapeHtml(n.title)+'</div>':'') +
+        '<div style="font-size:13px;color:var(--text-secondary);margin-top:4px;">'+escapeHtml(n.content).slice(0,120)+'</div></div>';
+    });
+    return html;
+  }
+  function wsSubprojectsHtml(p){
+    var subs = state.projects.filter(function(x){return x.parentProjectId===p.id;});
+    var area = lifeAreaById(p.lifeAreaId);
+    var html = '<div class="px"><button class="chip-btn" id="wsAddSubBtn" style="width:100%;">+ Новый подпроект</button></div>';
+    if (!subs.length) html += '<div class="empty"><h3>Нет подпроектов</h3><p>Разбейте проект на части.</p></div>';
+    else subs.forEach(function(s){ html += '<div style="padding:0 20px;">'+projectCardHtml(s, area?area.color:'#B0BEC5')+'</div>'; });
+    return html;
+  }
+  function wsStatsHtml(p){
+    var tasks = state.tasks.filter(function(t){return t.projectId===p.id;});
+    var done = tasks.filter(function(t){return t.isCompleted;}).length;
+    var counts = {};
+    tasks.forEach(function(t){ if (t.isCompleted && t.dueDate) { var d=t.dueDate.slice(0,10); counts[d]=(counts[d]||0)+1; } });
+    var cells = ''; var today = new Date();
+    for (var i=41;i>=0;i--){ var d=new Date(today); d.setDate(d.getDate()-i); var key=d.toISOString().slice(0,10); var c=counts[key]||0;
+      var color = c===0?'#EBEDF0':c===1?'#B0D9B1':c<=3?'#69B578':'#2A9D8F';
+      cells += '<div class="heat-cell" style="background:'+color+';"></div>'; }
+    return '<div class="stat-row px"><div><div class="stat-value">'+tasks.length+'</div><div class="stat-label">Всего задач</div></div>' +
+      '<div><div class="stat-value">'+done+'</div><div class="stat-label">Выполнено</div></div>' +
+      '<div><div class="stat-value">'+Math.round(p.progress||0)+'%</div><div class="stat-label">Прогресс</div></div></div>' +
+      '<div class="px" style="margin-top:14px;overflow-x:auto;"><div class="heat-grid">'+cells+'</div></div>';
+  }
+  function wireWorkspaceBody(body, p){
+    wireTaskRows(body);
+    var addTaskBtn = document.getElementById('wsAddTaskBtn');
+    if (addTaskBtn) addTaskBtn.addEventListener('click', function(){ openTaskModal(null, p.id); });
+    var addNoteBtn = document.getElementById('wsAddNoteBtn');
+    if (addNoteBtn) addNoteBtn.addEventListener('click', function(){ openNoteModal(null, p.id); });
+    var addSubBtn = document.getElementById('wsAddSubBtn');
+    if (addSubBtn) addSubBtn.addEventListener('click', function(){ openNewProjectModal(p.id); });
+    body.querySelectorAll('[data-note-id]').forEach(function(el){ el.addEventListener('click', function(){ openNoteModal(el.dataset.noteId, p.id); }); });
+    body.querySelectorAll('[data-project-id]').forEach(function(el){ el.addEventListener('click', function(){ openWorkspace(el.dataset.projectId); }); });
+  }
+
+  var newProjectParentId = null;
+  function openNewProjectModal(parentId){
+    newProjectParentId = parentId || null;
+    document.getElementById('newProjectNameInput').value = '';
+    var areaLabel = document.getElementById('newProjectAreaLabel');
+    var areaSelect = document.getElementById('newProjectAreaSelect');
+    areaLabel.style.display = parentId ? 'none' : 'block';
+    areaSelect.style.display = parentId ? 'none' : 'block';
+    areaSelect.innerHTML = LIFE_AREAS.map(function(a){ return '<option value="'+a.id+'">'+escapeHtml(a.name)+'</option>'; }).join('');
+    var templateSelect = document.getElementById('newProjectTemplateSelect');
+    var templates = state.projects.filter(function(p){return p.isTemplate;});
+    templateSelect.innerHTML = '<option value="">Не использовать</option>' + templates.map(function(t){ return '<option value="'+t.id+'">'+escapeHtml(t.name)+'</option>'; }).join('');
+    document.getElementById('newProjectModal').classList.add('open');
+  }
+  document.getElementById('newProjectBtn').addEventListener('click', function(){ openNewProjectModal(null); });
+  document.getElementById('newProjectModal').addEventListener('click', function(e){ if (e.target.id==='newProjectModal') closeModals(); });
+  document.getElementById('newProjectSaveBtn').addEventListener('click', function(){
+    var name = document.getElementById('newProjectNameInput').value.trim();
+    if (!name) return;
+    var parent = newProjectParentId ? projectById(newProjectParentId) : null;
+    var areaId = parent ? parent.lifeAreaId : document.getElementById('newProjectAreaSelect').value;
+    var project = { id:uid('p'), name:name, lifeAreaId:areaId, parentProjectId:newProjectParentId, status:'active', isTemplate:false };
+    state.projects.push(project);
+    var templateId = document.getElementById('newProjectTemplateSelect').value;
+    if (templateId) {
+      state.tasks.filter(function(t){return t.projectId===templateId;}).forEach(function(t){
+        state.tasks.push({ id:uid('t'), title:t.title, description:t.description, projectId:project.id, isCompleted:false, dueDate:null, priority:t.priority, isRecurring:false, recurrenceRule:null, reminderDate:null, seriesId:null, checklist:[] });
+      });
+    }
+    saveState(); closeModals();
+    if (newProjectParentId) renderWorkspace(); else renderProjects();
+  });
+
+  var priorities = [1,2,3,4,5]; var selectedPriority = 3;
+  var priorityPicker = document.getElementById('priorityPicker');
+  priorities.forEach(function(pr){
+    var el = document.createElement('div'); el.className='priority-dot'+(pr===3?' selected':''); el.textContent=pr;
+    el.addEventListener('click', function(){ selectedPriority=pr; priorityPicker.querySelectorAll('.priority-dot').forEach(function(d){d.classList.remove('selected');}); el.classList.add('selected'); });
+    priorityPicker.appendChild(el);
+  });
+  document.getElementById('recurringToggle').addEventListener('change', function(e){ document.getElementById('recurrenceRow').style.display = e.target.checked?'block':'none'; });
+  document.getElementById('reminderToggle').addEventListener('change', function(e){ document.getElementById('reminderRow').style.display = e.target.checked?'block':'none'; });
+  document.getElementById('taskTitleInput').addEventListener('input', function(){ document.getElementById('taskSaveBtn').disabled = !this.value.trim(); });
+
+  var editingTaskId = null; var editingChecklist = [];
+  function populateProjectSelect(sel, includeNone){
+    sel.innerHTML = (includeNone?'<option value="">Без проекта</option>':'') + state.projects.map(function(p){ return '<option value="'+p.id+'">'+escapeHtml(p.name)+'</option>'; }).join('');
+  }
+  function openTaskModal(taskId, defaultProjectId, defaultDate){
+    editingTaskId = taskId;
+    var task = taskId ? state.tasks.find(function(t){return t.id===taskId;}) : null;
+    document.getElementById('taskModalTitle').textContent = task ? 'Задача' : 'Новая задача';
+    document.getElementById('taskSaveBtn').textContent = task ? 'Сохранить' : 'Создать';
+    document.getElementById('taskDeleteBtn').style.display = task ? 'block' : 'none';
+    document.getElementById('checklistLabel').style.display = 'block';
+    document.getElementById('checklistAddRow').style.display = 'flex';
+
+    populateProjectSelect(document.getElementById('taskProjectSelect'), true);
+    var d = task ? new Date(task.dueDate||Date.now()) : (defaultDate ? new Date(defaultDate) : new Date());
+    document.getElementById('taskTitleInput').value = task ? task.title : '';
+    document.getElementById('taskDescInput').value = task ? (task.description||'') : '';
+    document.getElementById('taskProjectSelect').value = task ? (task.projectId||'') : (defaultProjectId||'');
+    document.getElementById('taskDateInput').value = d.toISOString().slice(0,10);
+    document.getElementById('taskTimeInput').value = d.toISOString().slice(11,16);
+    selectedPriority = task ? task.priority : 3;
+    priorityPicker.querySelectorAll('.priority-dot').forEach(function(el){ el.classList.toggle('selected', +el.textContent===selectedPriority); });
+    document.getElementById('recurringToggle').checked = task ? !!task.isRecurring : false;
+    document.getElementById('recurrenceRow').style.display = (task&&task.isRecurring) ? 'block' : 'none';
+    document.getElementById('recurrenceSelect').value = (task&&task.recurrenceRule) || 'daily';
+    var hasReminder = task && task.reminderDate;
+    document.getElementById('reminderToggle').checked = !!hasReminder;
+    document.getElementById('reminderRow').style.display = hasReminder ? 'block':'none';
+    if (hasReminder){ var rd=new Date(task.reminderDate); document.getElementById('reminderDateInput').value=rd.toISOString().slice(0,10); document.getElementById('reminderTimeInput').value=rd.toISOString().slice(11,16); }
+    else { document.getElementById('reminderDateInput').value = d.toISOString().slice(0,10); document.getElementById('reminderTimeInput').value = '09:00'; }
+
+    editingChecklist = task ? JSON.parse(JSON.stringify(task.checklist||[])) : [];
+    renderChecklistEditor();
+    document.getElementById('taskSaveBtn').disabled = !document.getElementById('taskTitleInput').value.trim();
+    document.getElementById('quickAddModal').classList.add('open');
+  }
+  function renderChecklistEditor(){
+    var c = document.getElementById('checklistContainer');
+    c.innerHTML = editingChecklist.map(function(item){
+      return '<div class="task-row" style="padding:8px 0;" data-cl-id="'+item.id+'"><div class="checkbox '+(item.done?'done':'')+'" data-cl-check="'+item.id+'">'+checkSvg()+'</div>' +
+        '<div class="task-title '+(item.done?'done':'')+'" style="flex:1;">'+escapeHtml(item.text)+'</div>' +
+        '<button class="icon-btn" data-cl-remove="'+item.id+'" style="width:26px;height:26px;"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>';
+    }).join('');
+    c.querySelectorAll('[data-cl-check]').forEach(function(el){ el.addEventListener('click', function(){ var it=editingChecklist.find(function(x){return x.id===el.dataset.clCheck;}); it.done=!it.done; renderChecklistEditor(); }); });
+    c.querySelectorAll('[data-cl-remove]').forEach(function(el){ el.addEventListener('click', function(){ editingChecklist = editingChecklist.filter(function(x){return x.id!==el.dataset.clRemove;}); renderChecklistEditor(); }); });
+  }
+  document.getElementById('checklistAddBtn').addEventListener('click', function(){
+    var input = document.getElementById('checklistNewInput'); var text = input.value.trim();
+    if (!text) return;
+    editingChecklist.push({ id:uid('c'), text:text, done:false }); input.value=''; renderChecklistEditor();
+  });
+  document.getElementById('quickAddModal').addEventListener('click', function(e){ if (e.target.id==='quickAddModal') closeModals(); });
+  document.getElementById('taskSaveBtn').addEventListener('click', function(){
+    var title = document.getElementById('taskTitleInput').value.trim(); if (!title) return;
+    var due = document.getElementById('taskDateInput').value + 'T' + (document.getElementById('taskTimeInput').value||'09:00');
+    var hasReminder = document.getElementById('reminderToggle').checked;
+    var reminderDate = hasReminder ? (document.getElementById('reminderDateInput').value+'T'+(document.getElementById('reminderTimeInput').value||'09:00')) : null;
+    var isRecurring = document.getElementById('recurringToggle').checked;
+    var data = {
+      title: title, description: document.getElementById('taskDescInput').value.trim(),
+      projectId: document.getElementById('taskProjectSelect').value || null,
+      dueDate: due, priority: selectedPriority, isRecurring: isRecurring,
+      recurrenceRule: isRecurring ? document.getElementById('recurrenceSelect').value : null,
+      reminderDate: reminderDate, checklist: editingChecklist
+    };
+    if (editingTaskId) {
+      var task = state.tasks.find(function(t){return t.id===editingTaskId;});
+      Object.assign(task, data);
+    } else {
+      state.tasks.push(Object.assign({ id:uid('t'), isCompleted:false, seriesId: isRecurring?uid('series'):null }, data));
+    }
+    saveState(); closeModals(); renderAll();
+    maybeNotify(data);
+  });
+  document.getElementById('taskDeleteBtn').addEventListener('click', function(){
+    if (!editingTaskId) return;
+    if (!confirm('Удалить эту задачу?')) return;
+    state.tasks = state.tasks.filter(function(t){return t.id!==editingTaskId;});
+    saveState(); closeModals(); renderAll();
+  });
+  function maybeNotify(data){
+    if (!data.reminderDate || !('Notification' in window)) return;
+    if (Notification.permission !== 'granted') return;
+    var delay = new Date(data.reminderDate).getTime() - Date.now();
+    if (delay > 0 && delay < 24*60*60*1000) {
+      setTimeout(function(){ new Notification(data.title, { body:'Напоминание · Мой Проект' }); }, delay);
+    }
+  }
+
+  var editingNoteId = null; var editingNoteProjectId = null;
+  function openNoteModal(noteId, projectId){
+    editingNoteId = noteId; editingNoteProjectId = projectId;
+    var note = noteId ? state.notes.find(function(n){return n.id===noteId;}) : null;
+    document.getElementById('noteModalTitle').textContent = note ? 'Заметка' : 'Новая заметка';
+    document.getElementById('noteTitleInput').value = note ? (note.title||'') : '';
+    document.getElementById('noteContentInput').value = note ? note.content : '';
+    document.getElementById('noteDeleteBtn').style.display = note ? 'block' : 'none';
+    document.getElementById('noteModal').classList.add('open');
+  }
+  document.getElementById('noteModal').addEventListener('click', function(e){ if (e.target.id==='noteModal') closeModals(); });
+  document.getElementById('noteSaveBtn').addEventListener('click', function(){
+    var content = document.getElementById('noteContentInput').value.trim(); if (!content) return;
+    if (editingNoteId) {
+      var n = state.notes.find(function(x){return x.id===editingNoteId;});
+      n.title = document.getElementById('noteTitleInput').value.trim()||null; n.content = content; n.updatedAt = new Date().toISOString();
+    } else {
+      state.notes.push({ id:uid('n'), title:document.getElementById('noteTitleInput').value.trim()||null, content:content, projectId:editingNoteProjectId, createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() });
+    }
+    saveState(); closeModals(); if (wsCurrentProjectId) renderWorkspace();
+  });
+  document.getElementById('noteDeleteBtn').addEventListener('click', function(){
+    if (!editingNoteId || !confirm('Удалить эту заметку?')) return;
+    state.notes = state.notes.filter(function(n){return n.id!==editingNoteId;});
+    saveState(); closeModals(); if (wsCurrentProjectId) renderWorkspace();
+  });
+
+  var plannerMode = 'week';
+  var plannerRef = new Date();
+  var plannerSelectedDay = todayKey();
+  document.querySelectorAll('.mode-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){ plannerMode = btn.dataset.mode; document.querySelectorAll('.mode-btn').forEach(function(b){b.classList.remove('active');}); btn.classList.add('active'); renderPlanner(); });
+  });
+  document.getElementById('plannerPrev').addEventListener('click', function(){ shiftPlanner(-1); });
+  document.getElementById('plannerNext').addEventListener('click', function(){ shiftPlanner(1); });
+  function shiftPlanner(dir){
+    if (plannerMode==='week') plannerRef.setDate(plannerRef.getDate() + 7*dir);
+    else plannerRef.setMonth(plannerRef.getMonth() + dir);
+    renderPlanner();
+  }
+  function startOfWeek(date){
+    var d = new Date(date); var day = d.getDay(); var diff = (day===0?-6:1-day); d.setDate(d.getDate()+diff); d.setHours(0,0,0,0); return d;
+  }
+  function dateKey(d){ return d.toISOString().slice(0,10); }
+
+  function renderPlanner(){
+    document.getElementById('plannerHeader').textContent = plannerMode==='week'
+      ? plannerRef.toLocaleDateString('ru-RU',{month:'short'}) + ' — неделя'
+      : plannerRef.toLocaleDateString('ru-RU',{month:'long', year:'numeric'});
+    var calendar = document.getElementById('plannerCalendar');
+    calendar.innerHTML = plannerMode==='week' ? weekStripHtml() : monthGridHtml();
+    wirePlannerCalendar(calendar);
+    renderPlannerDayTasks();
+  }
+  function weekStripHtml(){
+    var start = startOfWeek(plannerRef); var html = '<div class="week-strip">';
+    for (var i=0;i<7;i++){
+      var d = new Date(start); d.setDate(start.getDate()+i);
+      var key = dateKey(d);
+      var isSel = key===plannerSelectedDay;
+      var isToday = key===todayKey();
+      var hasTasks = state.tasks.some(function(t){return (t.dueDate||'').slice(0,10)===key;});
+      var cd = state.colorDates.find(function(c){return c.date===key;});
+      html += '<div class="day-col" data-day="'+key+'">' +
+        '<div class="caption" style="margin:0;">'+d.toLocaleDateString('ru-RU',{weekday:'short'})+'</div>' +
+        '<div class="day-num'+(isSel?' selected':(isToday?' today':''))+'">'+d.getDate()+'</div>' +
+        '<div class="day-dot-row">' + (hasTasks?'<div class="day-dot" style="background:var(--text-tertiary);"></div>':'') + (cd?'<div class="day-dot" style="background:'+cd.color+';"></div>':'') + '</div></div>';
+    }
+    return html + '</div>';
+  }
+  function monthGridHtml(){
+    var y = plannerRef.getFullYear(), m = plannerRef.getMonth();
+    var first = new Date(y,m,1); var startDay = (first.getDay()===0?6:first.getDay()-1);
+    var daysInMonth = new Date(y,m+1,0).getDate();
+    var weekdays = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+    var html = '<div class="month-grid">';
+    weekdays.forEach(function(w){ html += '<div class="month-weekday">'+w+'</div>'; });
+    for (var i=0;i<startDay;i++) html += '<div></div>';
+    for (var day=1; day<=daysInMonth; day++){
+      var d = new Date(y,m,day); var key = dateKey(d);
+      var isSel = key===plannerSelectedDay; var isToday = key===todayKey();
+      var hasTasks = state.tasks.some(function(t){return (t.dueDate||'').slice(0,10)===key;});
+      var cd = state.colorDates.find(function(c){return c.date===key;});
+      html += '<div class="month-day" data-day="'+key+'"><div class="day-num'+(isSel?' selected':(isToday?' today':''))+'" style="width:26px;height:26px;font-size:12px;">'+day+'</div>' +
+        (cd?'<div class="day-dot" style="background:'+cd.color+';"></div>':(hasTasks?'<div class="day-dot" style="background:var(--text-tertiary);"></div>':'<div class="day-dot" style="background:transparent;"></div>')) + '</div>';
+    }
+    return html + '</div>';
+  }
+  function wirePlannerCalendar(root){
+    root.querySelectorAll('[data-day]').forEach(function(el){
+      el.addEventListener('click', function(){ plannerSelectedDay = el.dataset.day; renderPlanner(); });
+      if (plannerMode==='week') {
+        el.addEventListener('dragover', function(e){ e.preventDefault(); el.classList.add('drop-hover'); });
+        el.addEventListener('dragleave', function(){ el.classList.remove('drop-hover'); });
+        el.addEventListener('drop', function(e){
+          e.preventDefault(); el.classList.remove('drop-hover');
+          var taskId = e.dataTransfer.getData('text/plain');
+          var task = state.tasks.find(function(t){return t.id===taskId;});
+          if (!task) return;
+          var oldTime = task.dueDate ? task.dueDate.slice(11,16) : '09:00';
+          task.dueDate = el.dataset.day + 'T' + oldTime;
+          saveState(); renderPlanner();
+        });
+      }
+    });
+  }
+  function renderPlannerDayTasks(){
+    var d = new Date(plannerSelectedDay);
+    document.getElementById('plannerDayLabel').textContent = d.toLocaleDateString('ru-RU',{day:'numeric',month:'long'});
+    var tasks = state.tasks.filter(function(t){return (t.dueDate||'').slice(0,10)===plannerSelectedDay;});
+    var container = document.getElementById('plannerDayTasks');
+    if (!tasks.length) { container.innerHTML = '<div class="px caption">Нет задач на этот день</div>'; return; }
+    var html = '<div class="glass task-card">';
+    tasks.forEach(function(t){ html += taskRowHtml(t); });
+    html += '</div>';
+    container.innerHTML = html;
+    wireTaskRows(container);
+    container.querySelectorAll('.task-row').forEach(function(row){
+      row.setAttribute('draggable','true');
+      row.addEventListener('dragstart', function(e){ e.dataTransfer.setData('text/plain', row.dataset.taskId); });
+    });
+  }
+  document.getElementById('colorDateBtn').addEventListener('click', function(){
+    document.getElementById('colorDateTitleInput').value='';
+    document.getElementById('colorDateDateInput').value = plannerSelectedDay;
+    var pal = document.getElementById('colorDatePalette');
+    pal.innerHTML = PALETTE.map(function(c,i){ return '<div class="accent-swatch'+(i===0?' selected':'')+'" data-color="'+c+'" style="background:'+c+';"></div>'; }).join('');
+    pal.querySelectorAll('[data-color]').forEach(function(el){ el.addEventListener('click', function(){ pal.querySelectorAll('.accent-swatch').forEach(function(x){x.classList.remove('selected');}); el.classList.add('selected'); }); });
+    document.getElementById('colorDateModal').classList.add('open');
+  });
+  document.getElementById('colorDateModal').addEventListener('click', function(e){ if (e.target.id==='colorDateModal') closeModals(); });
+  document.getElementById('colorDateSaveBtn').addEventListener('click', function(){
+    var title = document.getElementById('colorDateTitleInput').value.trim(); if (!title) return;
+    var color = document.querySelector('#colorDatePalette .selected').dataset.color;
+    state.colorDates.push({ id:uid('cd'), date:document.getElementById('colorDateDateInput').value, title:title, color:color });
+    saveState(); closeModals(); renderPlanner();
+  });
+
+  function renderAnalytics(){
+    var sel = document.getElementById('heatmapProjectFilter');
+    sel.innerHTML = '<option value="">Все</option>' + state.projects.map(function(p){ return '<option value="'+p.id+'">'+escapeHtml(p.name)+'</option>'; }).join('');
+    renderHeatmap(); renderWheel();
+  }
+  document.getElementById('heatmapProjectFilter').addEventListener('change', renderHeatmap);
+  function renderHeatmap(){
+    var filterId = document.getElementById('heatmapProjectFilter').value;
+    var tasks = filterId ? state.tasks.filter(function(t){return t.projectId===filterId;}) : state.tasks;
+    var counts = {};
+    tasks.forEach(function(t){ if (t.isCompleted && t.dueDate) { var d=t.dueDate.slice(0,10); counts[d]=(counts[d]||0)+1; } });
+    var container = document.getElementById('heatmapContainer');
+    var html = ''; var today = new Date();
+    for (var i=97;i>=0;i--){ var d=new Date(today); d.setDate(d.getDate()-i); var key=d.toISOString().slice(0,10); var c=counts[key]||0;
+      var color = c===0?'#EBEDF0':c===1?'#B0D9B1':c<=3?'#69B578':'#2A9D8F';
+      html += '<div class="heat-cell" style="background:'+color+';" title="'+key+': '+c+'"></div>'; }
+    container.innerHTML = html;
+    document.getElementById('statTotal').textContent = tasks.length;
+    document.getElementById('statDone').textContent = tasks.filter(function(t){return t.isCompleted;}).length;
+    var streak=0, best=0; var day=new Date();
+    for (var j=0;j<365;j++){ var k=day.toISOString().slice(0,10); if (counts[k]) { streak++; best=Math.max(best,streak); } else streak=0; day.setDate(day.getDate()-1); }
+    document.getElementById('statStreak').textContent = best;
+  }
+  function renderWheel(){
+    var canvas = document.getElementById('wheelCanvas');
+    if (!canvas) return;
+    var rect = canvas.getBoundingClientRect();
+    var cssW = Math.max(280, Math.min(520, rect.width || 350));
+    var cssH = Math.max(260, Math.round(cssW * 0.82));
+    var dpr = Math.min(window.devicePixelRatio || 1, 3);
+
+    canvas.style.height = cssH + 'px';
+    canvas.width = Math.round(cssW * dpr);
+    canvas.height = Math.round(cssH * dpr);
+
+    var ctx = canvas.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,cssW,cssH);
+
+    var w=cssW, h=cssH;
+    var cx=w/2, cy=h/2;
+    var maxR=Math.min(w,h)/2 - 42;
+    var n=state.wheelSectors.length;
+    if (!n) return;
+    var anglePer=(2*Math.PI)/n;
+    var textColor=getComputedStyle(document.documentElement).getPropertyValue('--text-secondary').trim() || '#6C7A89';
+    var primary=getComputedStyle(document.documentElement).getPropertyValue('--text-primary').trim() || '#1A1A1A';
+
+    // Soft guide rings
+    for (var ring=2; ring<=10; ring+=2){
+      ctx.beginPath();
+      ctx.arc(cx,cy,maxR*ring/10,0,2*Math.PI);
+      ctx.strokeStyle='rgba(120,130,140,.16)';
+      ctx.lineWidth=1;
+      ctx.stroke();
+    }
+
+    // Radial guides
+    state.wheelSectors.forEach(function(sec,i){
+      var a=-Math.PI/2+anglePer*i;
+      ctx.beginPath();
+      ctx.moveTo(cx,cy);
+      ctx.lineTo(cx+Math.cos(a)*maxR,cy+Math.sin(a)*maxR);
+      ctx.strokeStyle='rgba(120,130,140,.12)';
+      ctx.stroke();
+    });
+
+    // Sectors
+    state.wheelSectors.forEach(function(sec,i){
+      var start=-Math.PI/2+anglePer*i+0.018;
+      var end=start+anglePer-0.036;
+      var r=maxR*Math.max(1,sec.value)/10;
+
+      ctx.beginPath();
+      ctx.moveTo(cx,cy);
+      ctx.arc(cx,cy,r,start,end);
+      ctx.closePath();
+      ctx.fillStyle=sec.color+'C9';
+      ctx.fill();
+
+      ctx.strokeStyle='rgba(255,255,255,.9)';
+      ctx.lineWidth=1.5;
+      ctx.stroke();
+
+      // Value dot at the end of each sector
+      var mid=(start+end)/2;
+      var px=cx+Math.cos(mid)*r, py=cy+Math.sin(mid)*r;
+      ctx.beginPath();
+      ctx.arc(px,py,3.5,0,2*Math.PI);
+      ctx.fillStyle='#fff';
+      ctx.fill();
+    });
+
+    // Center
+    ctx.beginPath();
+    ctx.arc(cx,cy,29,0,2*Math.PI);
+    ctx.fillStyle='rgba(255,255,255,.82)';
+    ctx.fill();
+    ctx.strokeStyle='rgba(120,130,140,.14)';
+    ctx.stroke();
+    var avg=state.wheelSectors.reduce(function(sum,s){return sum+s.value;},0)/n;
+    var avgEl=document.getElementById('wheelAverage'); if(avgEl) avgEl.innerHTML=avg.toFixed(1)+'<small>/ 10</small>';
+    ctx.fillStyle=primary;
+    ctx.font='600 18px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText(avg.toFixed(1),cx,cy-2);
+    ctx.fillStyle=textColor;
+    ctx.font='10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
+    ctx.fillText('среднее',cx,cy+13);
+
+    // Labels with collision-safe distance
+    state.wheelSectors.forEach(function(sec,i){
+      var mid=-Math.PI/2+anglePer*(i+0.5);
+      var labelR=maxR+24;
+      var lx=cx+Math.cos(mid)*labelR;
+      var ly=cy+Math.sin(mid)*labelR;
+      ctx.fillStyle=textColor;
+      ctx.font='500 11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
+      ctx.textAlign=lx<cx-8?'right':(lx>cx+8?'left':'center');
+      ctx.textBaseline='middle';
+      var name=sec.name.length>13 ? sec.name.slice(0,12)+'…' : sec.name;
+      ctx.fillText(name,lx,ly);
+    });
+
+    var sliders=document.getElementById('wheelSliders');
+    sliders.innerHTML=state.wheelSectors.map(function(sec){
+      return '<div class="sector-row"><div class="sector-row-top"><span class="sector-dot" style="background:'+sec.color+';"></span>' +
+        '<span style="flex:1;font-size:13px;color:var(--text-primary);">'+escapeHtml(sec.name)+'</span><span class="caption" style="margin:0;">'+sec.value+'</span></div>' +
+        '<input type="range" min="1" max="10" value="'+sec.value+'" data-sector-id="'+sec.id+'" aria-label="'+escapeHtml(sec.name)+'"></div>';
+    }).join('');
+    sliders.querySelectorAll('[data-sector-id]').forEach(function(input){
+      input.addEventListener('input',function(){
+        var sec=state.wheelSectors.find(function(s){return s.id===input.dataset.sectorId;});
+        if (!sec) return;
+        sec.value=+input.value;
+        saveState();
+        renderWheel();
+      });
+    });
+  }
+  var wheelPointerActive=false;
+  function updateWheelFromPointer(e){
+    var canvas=document.getElementById('wheelCanvas'); if(!canvas) return;
+    var rect=canvas.getBoundingClientRect();
+    var x=e.clientX-rect.left, y=e.clientY-rect.top;
+    var cx=rect.width/2, cy=rect.height/2;
+    var maxR=Math.min(rect.width,rect.height)/2-42;
+    var dx=x-cx, dy=y-cy;
+    var dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<28 || dist>maxR+28) return;
+    var angle=Math.atan2(dy,dx)+Math.PI/2;
+    if(angle<0) angle+=Math.PI*2;
+    var n=state.wheelSectors.length;
+    var index=Math.floor(angle/((Math.PI*2)/n));
+    index=Math.max(0,Math.min(n-1,index));
+    var value=Math.round(Math.max(1,Math.min(10,dist/maxR*10)));
+    var sec=state.wheelSectors[index]; if(!sec) return;
+    if(sec.value!==value){sec.value=value;saveState();renderWheel();}
+  }
+  document.getElementById('wheelCanvas').addEventListener('pointerdown',function(e){wheelPointerActive=true;this.setPointerCapture&&this.setPointerCapture(e.pointerId);updateWheelFromPointer(e);});
+  document.getElementById('wheelCanvas').addEventListener('pointermove',function(e){if(wheelPointerActive)updateWheelFromPointer(e);});
+  document.getElementById('wheelCanvas').addEventListener('pointerup',function(){wheelPointerActive=false;});
+  document.getElementById('wheelCanvas').addEventListener('pointercancel',function(){wheelPointerActive=false;});
+  var wheelResizeTimer;
+  window.addEventListener('resize',function(){
+    clearTimeout(wheelResizeTimer);
+    wheelResizeTimer=setTimeout(function(){
+      if (currentTab==='analytics') renderWheel();
+    },120);
+  });
+
+  document.getElementById('wheelEditBtn').addEventListener('click', function(){ renderWheelEditor(); document.getElementById('wheelEditorModal').classList.add('open'); });
+  document.getElementById('wheelEditorModal').addEventListener('click', function(e){ if (e.target.id==='wheelEditorModal') closeModals(); });
+  document.getElementById('wheelEditorDoneBtn').addEventListener('click', function(){ closeModals(); renderWheel(); });
+  document.getElementById('wheelAddSectorBtn').addEventListener('click', function(){
+    if (state.wheelSectors.length>=10) return;
+    var used = state.wheelSectors.map(function(s){return s.color;});
+    var next = PALETTE.find(function(c){return used.indexOf(c)===-1;}) || PALETTE[0];
+    state.wheelSectors.push({ id:uid('w'), name:'Новый сектор', color:next, value:5 });
+    saveState(); renderWheelEditor();
+  });
+  function renderWheelEditor(){
+    var list = document.getElementById('wheelEditorList');
+    list.innerHTML = state.wheelSectors.map(function(sec){
+      return '<div class="row2" style="align-items:center;margin-bottom:10px;">' +
+        '<div class="sector-dot" style="background:'+sec.color+';width:20px;height:20px;flex:0 0 20px;"></div>' +
+        '<input type="text" value="'+escapeHtml(sec.name)+'" data-sector-name="'+sec.id+'" style="flex:1;">' +
+        (state.wheelSectors.length>4 ? '<button class="icon-btn" data-sector-remove="'+sec.id+'" style="flex:0 0 32px;"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>' : '') +
+        '</div>';
+    }).join('');
+    list.querySelectorAll('[data-sector-name]').forEach(function(input){
+      input.addEventListener('input', function(){ state.wheelSectors.find(function(s){return s.id===input.dataset.sectorName;}).name = input.value; saveState(); });
+    });
+    list.querySelectorAll('[data-sector-remove]').forEach(function(btn){
+      btn.addEventListener('click', function(){ if (state.wheelSectors.length<=4) return; state.wheelSectors = state.wheelSectors.filter(function(s){return s.id!==btn.dataset.sectorRemove;}); saveState(); renderWheelEditor(); });
+    });
+  }
+
+  function renderInbox(){
+    var container = document.getElementById('thoughtsContainer');
+    if (!state.thoughts.length) { container.innerHTML = '<div class="empty"><svg viewBox="0 0 24 24"><path d="M3 8l2-4h14l2 4M3 8v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8M3 8h18M9 12a3 3 0 0 0 6 0"/></svg><h3>Inbox пуст</h3><p>Запишите мысль выше.</p></div>'; return; }
+    var sorted = state.thoughts.slice().sort(function(a,b){return new Date(b.createdAt)-new Date(a.createdAt);});
+    container.innerHTML = sorted.map(function(th){
+      var d = new Date(th.createdAt).toLocaleString('ru-RU',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
+      return '<div class="glass thought-card" data-thought-id="'+th.id+'"><div class="thought-text">'+escapeHtml(th.text)+'</div><div class="thought-date">'+d+(th.isProcessed?' · обработано':'')+'</div></div>';
+    }).join('');
+    container.querySelectorAll('[data-thought-id]').forEach(function(el){ el.addEventListener('click', function(){ openThoughtModal(el.dataset.thoughtId); }); });
+  }
+  document.getElementById('thoughtSaveBtn').addEventListener('click', function(){
+    var input = document.getElementById('thoughtInput'); var text = input.value.trim(); if (!text) return;
+    state.thoughts.push({ id:uid('th'), text:text, createdAt:new Date().toISOString(), isProcessed:false });
+    input.value=''; saveState(); renderInbox();
+  });
+  var editingThoughtId = null; var thoughtAction = 'task';
+  function openThoughtModal(id){
+    editingThoughtId = id; var th = state.thoughts.find(function(x){return x.id===id;});
+    document.getElementById('thoughtModalText').textContent = th.text;
+    thoughtAction = 'task';
+    document.querySelectorAll('#thoughtActionPicker .segmented-item').forEach(function(el){ el.classList.toggle('selected', el.dataset.action==='task'); });
+    populateProjectSelect(document.getElementById('thoughtProjectSelect'), true);
+    document.getElementById('thoughtDateInput').value = todayKey();
+    updateThoughtRows();
+    document.getElementById('thoughtModal').classList.add('open');
+  }
+  document.querySelectorAll('#thoughtActionPicker .segmented-item').forEach(function(el){
+    el.addEventListener('click', function(){ thoughtAction = el.dataset.action; document.querySelectorAll('#thoughtActionPicker .segmented-item').forEach(function(x){x.classList.remove('selected');}); el.classList.add('selected'); updateThoughtRows(); });
+  });
+  function updateThoughtRows(){
+    document.getElementById('thoughtProjectRow').style.display = thoughtAction==='delete' ? 'none':'block';
+    document.getElementById('thoughtDateRow').style.display = thoughtAction==='task' ? 'block':'none';
+  }
+  document.getElementById('thoughtModal').addEventListener('click', function(e){ if (e.target.id==='thoughtModal') closeModals(); });
+  document.getElementById('thoughtProcessBtn').addEventListener('click', function(){
+    var th = state.thoughts.find(function(x){return x.id===editingThoughtId;}); if (!th) return;
+    var projectId = document.getElementById('thoughtProjectSelect').value || null;
+    if (thoughtAction==='task') {
+      state.tasks.push({ id:uid('t'), title:th.text, description:'', projectId:projectId, isCompleted:false, dueDate:document.getElementById('thoughtDateInput').value+'T09:00', priority:3, isRecurring:false, recurrenceRule:null, reminderDate:null, seriesId:null, checklist:[] });
+      th.isProcessed = true;
+    } else if (thoughtAction==='note') {
+      state.notes.push({ id:uid('n'), title:null, content:th.text, projectId:projectId, createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() });
+      th.isProcessed = true;
+    } else {
+      state.thoughts = state.thoughts.filter(function(x){return x.id!==editingThoughtId;});
+    }
+    saveState(); closeModals(); renderInbox();
+  });
+
+  document.getElementById('avatarBtn').addEventListener('click', function(){ openSettings(); });
+  document.getElementById('settingsCloseBtn').addEventListener('click', closeModals);
+  document.getElementById('settingsModal').addEventListener('click', function(e){ if (e.target.id==='settingsModal') closeModals(); });
+  function openSettings(){
+    document.getElementById('settingsNameInput').value = state.settings.userName;
+    document.getElementById('weekStartToggle').checked = state.settings.weekStartsOnMonday;
+    var themeRow = document.getElementById('themeRow');
+    themeRow.innerHTML = THEMES.map(function(t){
+      var sel = t.name===state.settings.themeName;
+      return '<div class="theme-swatch" data-theme-name="'+t.name+'"><div class="theme-circle'+(sel?' selected':'')+'" style="background:'+t.bg+';"><span class="dot" style="background:'+t.a1+';"></span></div><span class="theme-name">'+t.name+'</span></div>';
+    }).join('');
+    themeRow.querySelectorAll('[data-theme-name]').forEach(function(el){
+      el.addEventListener('click', function(){
+        var t = THEMES.find(function(x){return x.name===el.dataset.themeName;});
+        state.settings.themeName = t.name; state.settings.accentStart = t.a1; state.settings.accentEnd = t.a2;
+        applyTheme(); saveState(); openSettings();
+      });
+    });
+    var accentRow = document.getElementById('accentRow');
+    accentRow.innerHTML = ACCENT_PRESETS.map(function(p){
+      var sel = p.start===state.settings.accentStart;
+      return '<div class="accent-swatch'+(sel?' selected':'')+'" data-accent-start="'+p.start+'" data-accent-end="'+p.end+'" style="background:linear-gradient(135deg,'+p.start+','+p.end+');"></div>';
+    }).join('');
+    accentRow.querySelectorAll('[data-accent-start]').forEach(function(el){
+      el.addEventListener('click', function(){
+        state.settings.accentStart = el.dataset.accentStart; state.settings.accentEnd = el.dataset.accentEnd;
+        applyTheme(); saveState(); openSettings();
+      });
+    });
+    document.getElementById('customAccentInput').value = state.settings.accentStart;
+    document.getElementById('settingsModal').classList.add('open');
+  }
+  document.getElementById('settingsNameInput').addEventListener('input', function(){ state.settings.userName = this.value.trim()||'Гость'; saveState(); renderToday(); });
+  document.getElementById('weekStartToggle').addEventListener('change', function(){ state.settings.weekStartsOnMonday = this.checked; saveState(); });
+  document.getElementById('customAccentInput').addEventListener('input', function(){
+    var hex = this.value; state.settings.accentStart = hex; state.settings.accentEnd = hex; applyTheme(); saveState();
+  });
+  document.getElementById('exportDataBtn').addEventListener('click', function(){
+    var json = JSON.stringify(state, null, 2);
+    var blob = new Blob([json], {type:'application/json'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a'); a.href = url; a.download = 'moy-proekt-export.json'; a.click();
+    URL.revokeObjectURL(url);
+  });
+  document.getElementById('importDataInput').addEventListener('change', function(e){
+    var file = e.target.files[0]; if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      try { var parsed = JSON.parse(reader.result); Object.assign(state, parsed); applyTheme(); saveState(); closeModals(); renderAll(); alert('Импортировано.'); }
+      catch(err){ alert('Не удалось прочитать файл.'); }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  });
+  document.getElementById('resetDataBtn').addEventListener('click', function(){
+    if (!confirm('Сбросить все данные без возможности восстановления?')) return;
+    state.tasks=[]; state.notes=[]; state.thoughts=[]; state.colorDates=[];
+    state.projects = [{ id:'p1', name:'Запуск сайта', lifeAreaId:'la1', parentProjectId:null, status:'active', isTemplate:false }];
+    saveState(); closeModals(); renderAll();
+  });
+
+  function closeModals(){
+    document.querySelectorAll('.modal-backdrop').forEach(function(m){ m.classList.remove('open'); });
+  }
+  document.getElementById('fabBtn').addEventListener('click', function(){ openTaskModal(null, null, currentTab==='planner'?plannerSelectedDay:null); });
+
+  function renderAll(){ renderToday(); renderProjects(); renderInbox(); if (currentTab==='planner') renderPlanner(); if (currentTab==='analytics') renderAnalytics(); }
+  function render(){ renderAll(); }
+
+  loadState();
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function(){
+      navigator.serviceWorker.register('service-worker.js').catch(function(e){ console.warn('SW register failed', e); });
+    });
+  }
+  if ('Notification' in window && Notification.permission === 'default') {
+    document.body.addEventListener('click', function once(){ Notification.requestPermission(); document.body.removeEventListener('click', once); }, { once:true });
+  }
+
+  var deferredPrompt = null;
+  var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  window.addEventListener('beforeinstallprompt', function(e){
+    e.preventDefault();
+    deferredPrompt = e;
+    if (!isStandalone && !localStorage.getItem('androidInstallDismissed')) {
+      document.getElementById('androidInstallBanner').classList.add('show');
+    }
+  });
+  document.getElementById('androidInstallBtn').addEventListener('click', function(){
+    document.getElementById('androidInstallBanner').classList.remove('show');
+    if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; }
+  });
+  document.getElementById('androidInstallClose').addEventListener('click', function(){
+    document.getElementById('androidInstallBanner').classList.remove('show');
+    localStorage.setItem('androidInstallDismissed', '1');
+  });
+
+  var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+  var isSafari = /^((?!chrome|android|crios|fxios).)*safari/i.test(navigator.userAgent);
+  if (isIOS && isSafari && !isStandalone && !localStorage.getItem('iosInstallDismissed')) {
+    document.getElementById('iosInstallBanner').classList.add('show');
+  }
+  document.getElementById('iosInstallClose').addEventListener('click', function(){
+    document.getElementById('iosInstallBanner').classList.remove('show');
+    localStorage.setItem('iosInstallDismissed', '1');
+  });
+})();
+</script>
+</body>
+</html>
