@@ -3,14 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-<title>Мой Проект</title>
+<title>loomiapp</title>
 
 <link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
 <meta name="theme-color" content="#FF6B6B">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Мой Проект">
+<meta name="apple-mobile-web-app-title" content="loomiapp">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" href="icons/icon-192.png">
 
@@ -29,7 +32,7 @@
   html, body {
     margin:0; padding:0; height:100%; overscroll-behavior:none;
     background:var(--bg);
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;
+    font-family:"Montserrat",-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;
   }
   #app { position:fixed; inset:0; width:100%; height:100dvh; min-height:100dvh; background:var(--bg); display:flex; flex-direction:column; overflow:hidden; transition: background .3s ease-in-out; }
   @supports not (height: 100dvh) { #app { height:100vh; min-height:100vh; } }
@@ -231,6 +234,34 @@
   .modal-sheet{border-radius:28px 28px 0 0;box-shadow:0 -18px 50px rgba(28,31,36,.14);}
   .modal-save{background:var(--text-primary);}
   .thought-save-btn,.chip-btn{background:var(--text-primary);}
+
+  .brand-mark{font-family:"Montserrat",sans-serif;font-weight:700;letter-spacing:-.07em;font-size:18px;color:var(--text-primary);}
+  .today-focus{margin:12px 20px 0;padding:16px 18px;border-radius:22px;background:var(--surface-strong);border:1px solid var(--line);box-shadow:var(--shadow-soft);}
+  .focus-label{font-family:"Montserrat",sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:var(--text-secondary);}
+  .focus-row{display:flex;align-items:center;gap:10px;margin-top:8px;}
+  .focus-select{border:0!important;background:transparent!important;padding:0!important;font-family:inherit;font-size:15px!important;font-weight:600;outline:none;box-shadow:none!important;}
+  .mood-card{margin:12px 20px 0;padding:13px 15px;border-radius:20px;background:rgba(255,255,255,.45);border:1px solid var(--line);}
+  .mood-head{display:flex;align-items:center;justify-content:space-between;}
+  .mood-label{font-family:"Montserrat",sans-serif;font-size:11px;font-weight:700;color:var(--text-secondary);}
+  .mood-options{display:flex;gap:6px;margin-top:9px;}
+  .mood-btn{width:38px;height:32px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.7);font-size:16px;cursor:pointer;transition:transform .18s,background .18s,border-color .18s;}
+  .mood-btn.selected{background:var(--text-primary);color:#fff;border-color:var(--text-primary);transform:translateY(-1px);}
+  .soft-mode{margin:12px 20px 0;display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-radius:18px;background:rgba(255,255,255,.5);border:1px dashed rgba(38,42,48,.13);}
+  .soft-copy strong{display:block;font-size:13px;font-weight:650;color:var(--text-primary);}
+  .soft-copy span{display:block;font-size:11px;color:var(--text-secondary);margin-top:2px;}
+  .soft-toggle{border:0;border-radius:999px;padding:8px 12px;background:var(--text-primary);color:#fff;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;}
+  .soft-toggle.on{background:var(--accent-start);}
+  .focus-empty{font-size:13px;color:var(--text-secondary);}
+  .reflection-card{margin:20px 20px 0;padding:18px;border-radius:24px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow-soft);}
+  .reflection-card h3{font-family:"Montserrat",sans-serif;font-size:17px;letter-spacing:-.035em;}
+  .reflection-card p{font-size:12px;color:var(--text-secondary);margin-top:5px;line-height:1.4;}
+  .reflection-button{width:100%;margin-top:13px;padding:12px 14px;border:0;border-radius:14px;background:var(--text-primary);color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;}
+  .insight-card{margin:14px 20px 0;padding:15px 16px;border-radius:20px;background:linear-gradient(135deg,rgba(255,255,255,.78),rgba(255,255,255,.48));border:1px solid var(--line);}
+  .insight-kicker{font-family:"Montserrat",sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:var(--text-secondary);}
+  .insight-text{margin-top:7px;font-size:13px;line-height:1.45;color:var(--text-primary);}
+  .modal-sheet textarea.reflection-input{min-height:74px;}
+  @media(max-width:520px){.brand-mark{font-size:17px}.mood-btn{width:36px}.today-focus{padding:15px 16px;}}
+
   @media(max-width:520px){
     .today-number{font-size:38px;}
     .wheel-card{padding-left:3px;padding-right:3px;}
@@ -246,7 +277,7 @@
 <div id="app">
   <div id="androidInstallBanner" class="glass install-banner">
     <img src="icons/icon-192.png" alt="">
-    <div class="txt">Установите «Мой Проект» на телефон — работает офлайн, как обычное приложение.</div>
+    <div class="txt">Установите «loomiapp» на телефон — работает офлайн, как обычное приложение.</div>
     <button class="install-cta" id="androidInstallBtn">Установить</button>
     <button id="androidInstallClose" aria-label="Закрыть">&times;</button>
   </div>
@@ -259,15 +290,29 @@
   <div id="screens">
 
     <div class="screen active" id="screen-today">
-      <div class="px" style="display:flex;justify-content:space-between;align-items:flex-start;">
-        <div><div class="title" id="greetingTitle">Привет!</div><div class="caption" id="greetingDate"></div></div>
+      <div class="px" style="display:flex;justify-content:space-between;align-items:center;">
+        <div><div class="brand-mark">loomiapp</div><div class="caption" id="greetingDate"></div></div>
         <button class="avatar" id="avatarBtn">Г</button>
       </div>
       <div class="glass today-hero">
-        <div class="today-kicker">Фокус на сегодня</div>
+        <div class="today-kicker">Сегодня</div>
         <div class="today-number" id="dayProgressNumber">0<span>задач</span></div>
         <div class="progress-track hero-progress"><div class="progress-fill" id="dayProgressFill" style="width:0%"></div></div>
         <div class="hero-foot"><span id="dayProgressCaption">Выполнено 0 из 0 задач</span><span id="dayProgressPercent">0%</span></div>
+      </div>
+      <div class="today-focus">
+        <div class="focus-label">Одно главное</div>
+        <div class="focus-row"><span style="font-size:18px;">✦</span><select id="dailyFocusSelect" class="focus-select"><option value="">Выбери одну вещь, которая важнее всего</option></select></div>
+      </div>
+      <div class="mood-card">
+        <div class="mood-head"><span class="mood-label">Состояние дня</span><span class="caption" id="moodCaption" style="margin:0;">как ты сегодня?</span></div>
+        <div class="mood-options" id="moodOptions">
+          <button class="mood-btn" data-mood="1" aria-label="Тяжело">😫</button><button class="mood-btn" data-mood="2" aria-label="Так себе">😕</button><button class="mood-btn" data-mood="3" aria-label="Нормально">🙂</button><button class="mood-btn" data-mood="4" aria-label="Отлично">✨</button>
+        </div>
+      </div>
+      <div class="soft-mode">
+        <div class="soft-copy"><strong>Мягкий режим</strong><span id="softModeText">Оставляет только 3 ближайшие незавершённые задачи</span></div>
+        <button class="soft-toggle" id="softModeBtn">Включить</button>
       </div>
       <div class="section-label px">Мои задачи</div>
       <div id="tasksContainer"></div>
@@ -320,6 +365,8 @@
       <div class="wheel-summary"><div><div class="wheel-score" id="wheelAverage">0.0<small>/ 10</small></div><div class="caption">средний баланс</div></div><div class="wheel-tip">Потяни точку сектора прямо на колесе — или используй шкалы ниже.</div></div>
       <div class="wheel-card glass"><canvas id="wheelCanvas" aria-label="Колесо баланса"></canvas></div>
       <div class="px" id="wheelSliders"></div>
+      <div class="insight-card" id="weeklyInsightCard"><div class="insight-kicker">Наблюдение</div><div class="insight-text" id="weeklyInsightText">Собираем немного данных, чтобы показать что-то полезное.</div></div>
+      <div class="reflection-card"><h3>Твоя неделя</h3><p>Пара минут на то, чтобы заметить, что получилось и что хочется изменить.</p><button class="reflection-button" id="reflectionBtn">Сделать reflection</button></div>
     </div>
 
     <div class="screen" id="screen-inbox">
@@ -461,6 +508,17 @@
     </div>
   </div>
 
+  <div class="modal-backdrop" id="reflectionModal">
+    <div class="modal-sheet">
+      <div class="modal-title"><span>Weekly reflection</span><button class="icon-btn" id="reflectionCloseBtn"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>
+      <div class="reflection-stat glass" style="padding:14px;border-radius:18px;margin-bottom:12px;"><div class="caption" style="margin:0;">За последние 7 дней</div><div id="reflectionStats" style="font-size:22px;font-weight:700;margin-top:4px;"></div></div>
+      <div class="field-label">Что получилось лучше всего?</div><textarea class="reflection-input" id="reflectionWin" placeholder="Например: наконец закончила то, что откладывала"></textarea>
+      <div class="field-label">Что забрало больше всего энергии?</div><textarea class="reflection-input" id="reflectionEnergy" placeholder="Без правильного ответа"></textarea>
+      <div class="field-label">Что хочется изменить на следующей неделе?</div><textarea class="reflection-input" id="reflectionNext" placeholder="Одна маленькая вещь"></textarea>
+      <button class="modal-save" id="reflectionSaveBtn">Сохранить</button>
+    </div>
+  </div>
+
   <div class="modal-backdrop" id="settingsModal">
     <div class="modal-sheet" style="max-height:92%;">
       <div class="modal-title">Настройки<button class="icon-btn" id="settingsCloseBtn"><svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>
@@ -530,6 +588,10 @@
     notes: [],
     thoughts: [],
     colorDates: [],
+    dailyFocus: { date:null, taskId:null },
+    dailyMoods: {},
+    softModeDate: null,
+    reflections: [],
     wheelSectors: [
       { id:'w1', name:'Работа', color:'#FF6B6B', value:5 }, { id:'w2', name:'Здоровье', color:'#4ECDC4', value:5 },
       { id:'w3', name:'Отдых', color:'#45B7D1', value:5 }, { id:'w4', name:'Развитие', color:'#96CEB4', value:5 },
@@ -564,6 +626,10 @@
       var raw = localStorage.getItem(STORAGE_KEY);
       if (raw) { Object.assign(state, JSON.parse(raw)); }
       else seedIfEmpty();
+      state.dailyFocus = state.dailyFocus || {date:null, taskId:null};
+      state.dailyMoods = state.dailyMoods || {};
+      state.reflections = state.reflections || [];
+      if (!('softModeDate' in state)) state.softModeDate = null;
     } catch(e){ seedIfEmpty(); }
     applyTheme();
     render();
@@ -602,7 +668,6 @@
   }
 
   function renderToday(){
-    document.getElementById('greetingTitle').textContent = 'Привет, ' + state.settings.userName + '!';
     document.getElementById('greetingDate').textContent = new Date().toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
     document.getElementById('avatarBtn').textContent = state.settings.userName.slice(0,1).toUpperCase();
 
@@ -616,13 +681,40 @@
     var numEl=document.getElementById('dayProgressNumber'); if(numEl) numEl.innerHTML=completed+'<span>из '+total+' задач</span>';
     var pctEl=document.getElementById('dayProgressPercent'); if(pctEl) pctEl.textContent=pct+'%';
 
+    // One main thing
+    var focus = state.dailyFocus && state.dailyFocus.date===t ? state.dailyFocus.taskId : null;
+    var focusSelect=document.getElementById('dailyFocusSelect');
+    if(focusSelect){
+      focusSelect.innerHTML='<option value="">Выбери одну вещь, которая важнее всего</option>'+todays.map(function(task){return '<option value="'+task.id+'">'+escapeHtml(task.title)+'</option>';}).join('');
+      focusSelect.value=focus || '';
+      focusSelect.onchange=function(){ state.dailyFocus={date:t,taskId:focusSelect.value||null}; saveState(); renderToday(); };
+    }
+
+    // Mood
+    var mood=state.dailyMoods[t]||0;
+    document.querySelectorAll('#moodOptions .mood-btn').forEach(function(btn){ btn.classList.toggle('selected', +btn.dataset.mood===mood); });
+    var moodCaption=document.getElementById('moodCaption');
+    if(moodCaption) moodCaption.textContent=['','тяжёлый день','не лучший день','нормальный день','хороший день'][mood] || 'как ты сегодня?';
+    document.querySelectorAll('#moodOptions .mood-btn').forEach(function(btn){ btn.onclick=function(){ state.dailyMoods[t]=+btn.dataset.mood; saveState(); renderToday(); }; });
+
+    // Soft mode
+    var soft=state.softModeDate===t;
+    var softBtn=document.getElementById('softModeBtn'); if(softBtn){ softBtn.textContent=soft?'Выключить':'Включить'; softBtn.classList.toggle('on',soft); softBtn.onclick=function(){state.softModeDate=soft?null:t; saveState(); renderToday();}; }
+    var softText=document.getElementById('softModeText'); if(softText) softText.textContent=soft?'Режим включён · показываем только самое близкое':'Оставляет только 3 ближайшие незавершённые задачи';
+
+    var displayTasks = todays.slice();
+    if(soft){
+      var doneTasks=displayTasks.filter(function(x){return x.isCompleted;});
+      var openTasks=displayTasks.filter(function(x){return !x.isCompleted;}).sort(function(a,b){return (a.dueDate||'').localeCompare(b.dueDate||'');}).slice(0,3);
+      displayTasks=doneTasks.concat(openTasks);
+    }
     var container = document.getElementById('tasksContainer');
-    if (!todays.length) {
+    if (!displayTasks.length) {
       container.innerHTML = '<div class="glass empty" style="margin:0 20px;"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12l2.5 2.5L16 9"/></svg><h3>На сегодня задач нет</h3><p>Нажмите «+», чтобы добавить первую задачу.</p></div>';
       return;
     }
     var groups = {};
-    todays.forEach(function(task){ var key = task.projectId||'none'; (groups[key]=groups[key]||[]).push(task); });
+    displayTasks.forEach(function(task){ var key = task.projectId||'none'; (groups[key]=groups[key]||[]).push(task); });
     var html = '';
     Object.keys(groups).forEach(function(key){
       var proj = key!=='none' ? projectById(key) : null;
@@ -631,6 +723,7 @@
       groups[key].forEach(function(task){ html += taskRowHtml(task); });
       html += '</div>';
     });
+    if(soft && todays.filter(function(x){return !x.isCompleted;}).length>3){ html += '<div class="caption px" style="text-align:center;margin:10px 0 4px;">Мягкий режим скрывает остальные задачи — они никуда не делись.</div>'; }
     container.innerHTML = html;
     wireTaskRows(container);
   }
@@ -923,7 +1016,7 @@
     if (Notification.permission !== 'granted') return;
     var delay = new Date(data.reminderDate).getTime() - Date.now();
     if (delay > 0 && delay < 24*60*60*1000) {
-      setTimeout(function(){ new Notification(data.title, { body:'Напоминание · Мой Проект' }); }, delay);
+      setTimeout(function(){ new Notification(data.title, { body:'Напоминание · loomiapp' }); }, delay);
     }
   }
 
@@ -1068,8 +1161,37 @@
   function renderAnalytics(){
     var sel = document.getElementById('heatmapProjectFilter');
     sel.innerHTML = '<option value="">Все</option>' + state.projects.map(function(p){ return '<option value="'+p.id+'">'+escapeHtml(p.name)+'</option>'; }).join('');
-    renderHeatmap(); renderWheel();
+    renderHeatmap(); renderWheel(); renderWeeklyInsight();
   }
+  function renderWeeklyInsight(){
+    var el=document.getElementById('weeklyInsightText'); if(!el) return;
+    var days=[]; for(var i=6;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);days.push(d.toISOString().slice(0,10));}
+    var total=0,done=0,moodSum=0,moodCount=0;
+    days.forEach(function(k){var ts=state.tasks.filter(function(t){return (t.dueDate||'').slice(0,10)===k;});total+=ts.length;done+=ts.filter(function(t){return t.isCompleted;}).length;if(state.dailyMoods[k]){moodSum+=state.dailyMoods[k];moodCount++;}});
+    if(!total){el.textContent='Добавь несколько задач и отметок настроения — и здесь появится первое маленькое наблюдение.';return;}
+    var pct=Math.round(done/total*100);
+    el.textContent=moodCount ? 'За 7 дней ты завершила '+done+' из '+total+' задач ('+pct+'%). Средняя отметка состояния — '+(moodSum/moodCount).toFixed(1)+' из 4.' : 'За 7 дней ты завершила '+done+' из '+total+' задач ('+pct+'%). Добавь отметку состояния, чтобы увидеть связь с самочувствием.';
+  }
+  function openReflection(){
+    var now=new Date(), from=new Date(); from.setDate(now.getDate()-6);
+    var tasks=state.tasks.filter(function(t){var k=(t.dueDate||'').slice(0,10);return k>=from.toISOString().slice(0,10)&&k<=now.toISOString().slice(0,10);});
+    var done=tasks.filter(function(t){return t.isCompleted;}).length;
+    document.getElementById('reflectionStats').textContent=done+' / '+tasks.length+' задач';
+    var last=state.reflections[state.reflections.length-1];
+    document.getElementById('reflectionWin').value=last&&last.weekStart===from.toISOString().slice(0,10)?last.win:'';
+    document.getElementById('reflectionEnergy').value=last&&last.weekStart===from.toISOString().slice(0,10)?last.energy:'';
+    document.getElementById('reflectionNext').value=last&&last.weekStart===from.toISOString().slice(0,10)?last.next:'';
+    document.getElementById('reflectionModal').classList.add('open');
+  }
+  document.getElementById('reflectionBtn').addEventListener('click',openReflection);
+  document.getElementById('reflectionCloseBtn').addEventListener('click',closeModals);
+  document.getElementById('reflectionModal').addEventListener('click',function(e){if(e.target.id==='reflectionModal')closeModals();});
+  document.getElementById('reflectionSaveBtn').addEventListener('click',function(){
+    var now=new Date(), from=new Date(); from.setDate(now.getDate()-6); var weekStart=from.toISOString().slice(0,10);
+    var obj={weekStart:weekStart,win:document.getElementById('reflectionWin').value.trim(),energy:document.getElementById('reflectionEnergy').value.trim(),next:document.getElementById('reflectionNext').value.trim(),savedAt:new Date().toISOString()};
+    var idx=state.reflections.findIndex(function(r){return r.weekStart===weekStart;}); if(idx>=0) state.reflections[idx]=obj; else state.reflections.push(obj);
+    saveState(); closeModals(); renderAnalytics();
+  });
   document.getElementById('heatmapProjectFilter').addEventListener('change', renderHeatmap);
   function renderHeatmap(){
     var filterId = document.getElementById('heatmapProjectFilter').value;
@@ -1369,7 +1491,7 @@
   });
   document.getElementById('resetDataBtn').addEventListener('click', function(){
     if (!confirm('Сбросить все данные без возможности восстановления?')) return;
-    state.tasks=[]; state.notes=[]; state.thoughts=[]; state.colorDates=[];
+    state.tasks=[]; state.notes=[]; state.thoughts=[]; state.colorDates=[]; state.dailyFocus={date:null,taskId:null}; state.dailyMoods={}; state.softModeDate=null; state.reflections=[];
     state.projects = [{ id:'p1', name:'Запуск сайта', lifeAreaId:'la1', parentProjectId:null, status:'active', isTemplate:false }];
     saveState(); closeModals(); renderAll();
   });
