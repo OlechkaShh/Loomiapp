@@ -6,10 +6,10 @@
 <title>loomiapp</title>
 
 <script>
-(function(){try{var s=JSON.parse(localStorage.getItem('loomiapp-state-v2')||localStorage.getItem('moy-proekt-pwa-state-v1')||'null');var m=s&&s.settings&&s.settings.appearanceMode||'system';var d=m==='dark'||(m==='system'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches);document.documentElement.dataset.theme=d?'dark':'light';document.documentElement.style.colorScheme=d?'dark':'light';}catch(e){}})();
+(function(){try{var s=JSON.parse(localStorage.getItem('loomiapp-state-v2')||localStorage.getItem('moy-proekt-pwa-state-v1')||'null');var m=s&&s.settings&&s.settings.appearanceMode||'system';var d=m==='dark'||(m==='system'&&window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches);document.documentElement.dataset.theme=d?'dark':'light';document.documentElement.style.colorScheme=d?'dark':'light';document.documentElement.classList.add('theme-preload');}catch(e){}})();
 </script>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#FF6B6B">
+<meta name="theme-color" content="#FDF6F0">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -19,6 +19,7 @@
 <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
 
 <style>
+  html.theme-preload *,html.theme-preload *::before,html.theme-preload *::after{transition:none!important;}
   :root {
     --bg: #F9F9FB;
     --text-primary: #1A1A1A;
@@ -112,14 +113,19 @@
   .heat-cell{width:12px;height:12px;border-radius:3px;}
   .heat-grid{display:grid; grid-template-columns:repeat(14,12px); gap:3px;}
 
-  #workspaceOverlay{position:absolute; inset:0; background:var(--bg); z-index:50; display:flex; flex-direction:column; transform:translateY(100%); transition:transform .3s ease-in-out;}
+  #workspaceOverlay{position:absolute; inset:0; background:var(--loom-bg)!important; color:var(--loom-ink); z-index:50; display:flex; flex-direction:column; transform:translateY(100%); transition:transform .3s ease-in-out;}
   #workspaceOverlay.open{transform:translateY(0);}
   .ws-header{padding:calc(var(--safe-top) + 20px) 20px 0;}
   .ws-tabs{display:flex; gap:8px; overflow-x:auto; padding:12px 20px; scrollbar-width:none;}
   .ws-tabs::-webkit-scrollbar{display:none;}
   .ws-tab{padding:8px 14px; border-radius:20px; font-size:13px; color:var(--text-secondary); background:rgba(255,255,255,.5); white-space:nowrap; cursor:pointer;}
   .ws-tab.active{color:#fff; background:linear-gradient(90deg,var(--accent-start),var(--accent-end));}
-  .ws-body{flex:1; overflow-y:auto; padding-bottom:calc(var(--safe-bottom) + 40px);}
+  .ws-body{flex:1; overflow-y:auto; padding-bottom:calc(var(--safe-bottom) + 40px); background:var(--loom-bg)!important;}
+  .ws-header{background:var(--loom-bg)!important;}
+  .ws-tabs{background:var(--loom-bg)!important;}
+  .ws-tab{background:var(--loom-surface)!important;border:1px solid var(--loom-line)!important;color:var(--loom-muted)!important;}
+  .ws-tab.active{background:var(--loom-accent)!important;color:var(--loom-accent-contrast)!important;border-color:var(--loom-accent)!important;}
+  #workspaceOverlay .chip-btn,#workspaceOverlay .glass{background:var(--loom-surface)!important;color:var(--loom-ink)!important;border-color:var(--loom-line)!important;}
 
   .mode-switcher{display:flex;gap:4px;padding:4px;background:rgba(255,255,255,.5);border-radius:20px;margin:0 20px;}
   .mode-btn{flex:1;text-align:center;padding:8px 0;border-radius:16px;font-size:13px;color:var(--text-secondary);cursor:pointer;}
@@ -347,6 +353,11 @@
   .reflection-card p{font-size:13px;color:var(--text-secondary);margin-top:5px;line-height:1.4;}
   .reflection-button{width:100%;margin-top:13px;padding:12px 14px;border:0;border-radius:14px;background:var(--text-primary);color:#fff;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;}
   .insight-card{margin:14px 20px 0;padding:15px 16px;border-radius:20px;background:linear-gradient(135deg,rgba(255,255,255,.78),rgba(255,255,255,.48));border:1px solid var(--line);}
+  .insight-progress{margin:12px 0 10px;}
+  .insight-progress .progress-track{height:7px;}
+  .insight-progress-foot{display:flex;justify-content:space-between;align-items:center;margin-top:6px;font-size:13px;color:var(--loom-muted);}
+  .insight-progress-foot #weeklyInsightPercent{font-family:var(--loom-font-heading);font-weight:700;color:var(--loom-ink);}
+  .insight-text{line-height:1.35;}
   .insight-kicker{font-size:13px;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:var(--text-secondary);}
   .insight-text{margin-top:7px;font-size:13px;line-height:1.45;color:var(--text-primary);}
   .modal-sheet textarea.reflection-input{min-height:74px;}
@@ -441,6 +452,8 @@
   .theme-circle{background:var(--loom-surface)!important;border-color:var(--loom-line)!important;}
   .theme-circle .dot{background:var(--loom-accent)!important;}
   .accent-row{display:none!important;}
+  #colorDatePalette.accent-row{display:flex!important;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px;}
+  #colorDatePalette .accent-swatch{flex:0 0 30px;display:block!important;}
   .theme-note{margin:-2px 20px 8px;color:var(--loom-muted)!important;line-height:1.35;}
 
   /* Palette values are applied by applyTheme() so the selected palette and appearance mode stay in sync. */
@@ -566,6 +579,33 @@
     .mood-btn{height:34px!important;font-size:15px!important;}
   }
 
+
+  /* v7 mobile + theme QA: keep the existing design, remove hard-coded surfaces. */
+  :root{
+    --loom-surface-strong:var(--surface-strong);
+    --loom-field:var(--surface);
+    --loom-tabbar:color-mix(in srgb,var(--bg) 90%,transparent);
+  }
+  body{min-height:100%;background:var(--bg);}
+  #app{isolation:isolate;}
+  #tabbar{background:var(--loom-tabbar)!important;color:var(--text-primary);}
+  .glass,.today-focus,.today-hero,.mood-card,.soft-mode,.reflection-card,.insight-card,.stat-row,.wheel-card,.task-card,.thought-card,.appearance-card{background:var(--loom-surface)!important;}
+  input[type=text],input[type=search],select,input[type=date],input[type=time],textarea{background:var(--loom-field)!important;}
+  .icon-btn{background:var(--loom-surface-strong)!important;color:var(--loom-ink)!important;}
+  .day-num.today{background:var(--loom-surface-strong)!important;color:var(--text-primary);}
+  @media (max-width:520px){
+    .screen{padding-left:0;padding-right:0;padding-bottom:calc(var(--safe-bottom) + 112px);}
+    .today-focus{overflow:hidden;}
+    .focus-row{min-width:0;}
+    .focus-select{min-width:0;max-width:100%;}
+    .mood-options{width:100%;grid-template-columns:repeat(7,minmax(0,1fr));}
+    .mood-btn{aspect-ratio:1.15/1;}
+    #tabbar{padding-left:max(0px,var(--safe-left,0px));padding-right:max(0px,var(--safe-right,0px));}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important;animation-iteration-count:1!important;}
+  }
+
 </style>
 </head>
 <body>
@@ -661,7 +701,7 @@
       <div class="wheel-summary"><div><div class="wheel-score" id="wheelAverage">0.0<small>/ 10</small></div><div class="caption">средний баланс</div></div><div class="wheel-tip">Потяни точку сектора прямо на колесе — или используй шкалы ниже.</div></div>
       <div class="wheel-card glass"><canvas id="wheelCanvas" aria-label="Колесо баланса"></canvas></div>
       <div class="px" id="wheelSliders"></div>
-      <div class="insight-card" id="weeklyInsightCard"><div class="insight-kicker">Наблюдение</div><div class="insight-text" id="weeklyInsightText">Собираем немного данных, чтобы показать что-то полезное.</div></div>
+      <div class="insight-card" id="weeklyInsightCard"><div class="insight-kicker">Наблюдение</div><div class="insight-progress"><div class="progress-track"><div class="progress-fill" id="weeklyInsightFill" style="width:0%"></div></div><div class="insight-progress-foot"><span id="weeklyInsightPercent">0%</span><span>за последние 7 дней</span></div></div><div class="insight-text" id="weeklyInsightText">Собираем немного данных, чтобы показать что-то полезное.</div></div>
       <div class="reflection-card"><h3>Твоя неделя</h3><p>Пара минут на то, чтобы заметить, что получилось и что хочется изменить.</p><button class="reflection-button" id="reflectionBtn">Сделать reflection</button></div>
     </div>
 
@@ -949,6 +989,9 @@
     root.style.setProperty('--accent-end', dark ? t.darkA : t.a2);
     root.style.setProperty('--loom-bg', bg);
     root.style.setProperty('--loom-surface', surface);
+    root.style.setProperty('--loom-surface-strong', dark ? t.darkSurface : t.surface);
+    root.style.setProperty('--loom-field', surface);
+    root.style.setProperty('--loom-tabbar', dark ? 'color-mix(in srgb,'+bg+' 92%, black)' : 'color-mix(in srgb,'+bg+' 90%, transparent)');
     root.style.setProperty('--loom-accent', accent);
     root.style.setProperty('--loom-ink', ink);
     root.style.setProperty('--loom-muted', muted);
@@ -986,6 +1029,7 @@
     } catch(e){ seedIfEmpty(); }
     applyTheme();
     render();
+    document.documentElement.classList.remove('theme-preload');
     scheduleAllReminders();
   }
   function saveState(){
@@ -1549,12 +1593,16 @@
   }
   function renderWeeklyInsight(){
     var el=document.getElementById('weeklyInsightText'); if(!el) return;
+    var fill=document.getElementById('weeklyInsightFill');
+    var percent=document.getElementById('weeklyInsightPercent');
     var days=[]; for(var i=6;i>=0;i--){var d=new Date();d.setDate(d.getDate()-i);days.push(dateKey(d));}
     var total=0,done=0,moodSum=0,moodCount=0;
     days.forEach(function(k){var ts=state.tasks.filter(function(t){return (t.dueDate||'').slice(0,10)===k;});total+=ts.length;done+=ts.filter(function(t){return t.isCompleted;}).length;if(state.dailyMoods[k]){moodSum+=state.dailyMoods[k];moodCount++;}});
-    if(!total){el.textContent='Добавь несколько задач и отметок настроения — и здесь появится первое маленькое наблюдение.';return;}
-    var pct=Math.round(done/total*100);
-    el.textContent=moodCount ? 'За 7 дней ты завершила '+done+' из '+total+' задач ('+pct+'%). Средняя отметка состояния — '+(moodSum/moodCount).toFixed(1)+' из 7.' : 'За 7 дней ты завершила '+done+' из '+total+' задач ('+pct+'%). Добавь отметку состояния, чтобы увидеть связь с самочувствием.';
+    var pct=total ? Math.round(done/total*100) : 0;
+    if(fill) fill.style.width=pct+'%';
+    if(percent) percent.textContent=pct+'%';
+    if(!total){el.textContent='Добавь несколько задач и отметок состояния — и здесь появится первое маленькое наблюдение.';return;}
+    el.textContent=moodCount ? 'За 7 дней ты завершила '+done+' из '+total+' задач. Средняя отметка состояния — '+(moodSum/moodCount).toFixed(1)+' из 7.' : 'За 7 дней ты завершила '+done+' из '+total+' задач. Добавь отметку состояния, чтобы увидеть связь с самочувствием.';
   }
   function openReflection(){
     var now=new Date(), from=new Date(); from.setDate(now.getDate()-6);

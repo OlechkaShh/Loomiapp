@@ -2,7 +2,7 @@
 // Кэширует «оболочку» приложения, чтобы «loomiapp» открывался офлайн
 // после первого посещения (обязательное требование для полноценного PWA).
 
-const CACHE_NAME = 'loomiapp-v4';
+const CACHE_NAME = 'loomiapp-v7';
 const APP_SHELL = [
   './',
   './index.html',
@@ -10,7 +10,11 @@ const APP_SHELL = [
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-512-maskable.png',
-  './icons/icon-180.png'
+  './icons/icon-180.png',
+  './fonts/Inter-Regular.otf',
+  './fonts/Inter-Bold.otf',
+  './fonts/Montserrat-Regular.otf',
+  './fonts/Montserrat-Bold.otf'
 ];
 
 self.addEventListener('install', (event) => {
