@@ -327,10 +327,10 @@
   .today-focus{margin:12px 20px 0;padding:16px 18px;border-radius:22px;background:var(--surface-strong);border:1px solid var(--line);box-shadow:var(--shadow-soft);}
   .focus-label{font-size:13px;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:var(--text-secondary);}
   .focus-row{display:flex;align-items:center;gap:10px;margin-top:8px;}
-  .focus-select{border:0!important;background:transparent!important;padding:0!important;font-family:inherit;font-size:16px!important;font-weight:600;outline:none;box-shadow:none!important;}
+  .focus-select{border:0!important;background:transparent!important;padding:0!important;font-family:inherit;font-size:16px!important;font-weight:600;outline:none;box-shadow:none!important;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .mood-card{margin:12px 20px 0;padding:13px 15px;border-radius:20px;background:rgba(255,255,255,.45);border:1px solid var(--line);}
   .mood-head{display:flex;align-items:center;justify-content:space-between;}
-  .mood-label{font-size:13px;font-weight:700;color:var(--text-secondary);}
+  .mood-label{font-family:var(--loom-font-heading);font-size:13px;font-weight:700;color:var(--text-secondary);}
   .mood-options{display:flex;gap:6px;margin-top:9px;}
   .mood-btn{width:38px;height:32px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.7);font-size:16px;cursor:pointer;transition:transform .18s,background .18s,border-color .18s;}
   .mood-btn.selected{background:var(--text-primary);color:#fff;border-color:var(--text-primary);transform:translateY(-1px);}
@@ -348,7 +348,7 @@
   .insight-kicker{font-size:13px;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:var(--text-secondary);}
   .insight-text{margin-top:7px;font-size:13px;line-height:1.45;color:var(--text-primary);}
   .modal-sheet textarea.reflection-input{min-height:74px;}
-  @media(max-width:520px){.brand-mark{font-size:16px}.mood-btn{width:36px}.today-focus{padding:15px 16px;}}
+  @media(max-width:520px){.brand-mark{font-size:16px}.mood-options{gap:4px}.mood-btn{width:32px;height:32px;font-size:15px}.today-focus{padding:15px 16px;}.focus-row{gap:8px;}}
 
   @media(max-width:520px){
     .today-number{font-size:24px;}
@@ -593,16 +593,16 @@
         <div class="today-kicker">Сегодня</div>
         <div class="today-number" id="dayProgressNumber">0<span>задач</span></div>
         <div class="progress-track hero-progress"><div class="progress-fill" id="dayProgressFill" style="width:0%"></div></div>
-        <div class="hero-foot"><span id="dayProgressCaption">Выполнено 0 из 0 задач</span><span id="dayProgressPercent">0%</span></div>
+        <div class="hero-foot"><span id="dayProgressCaption" aria-hidden="true" style="display:none"></span><span id="dayProgressPercent">0%</span></div>
       </div>
       <div class="today-focus">
         <div class="focus-label">Одно главное</div>
-        <div class="focus-row"><span style="font-size:18px;">✦</span><select id="dailyFocusSelect" class="focus-select"><option value="">Выбери одну вещь, которая важнее всего</option></select></div>
+        <div class="focus-row"><span style="font-size:18px;">✦</span><select id="dailyFocusSelect" class="focus-select"><option value="">Выбери главное на сегодня</option></select></div>
       </div>
       <div class="mood-card">
         <div class="mood-head"><span class="mood-label">Состояние дня</span><span class="caption" id="moodCaption" style="margin:0;">как ты сегодня?</span></div>
         <div class="mood-options" id="moodOptions">
-          <button class="mood-btn" data-mood="1" aria-label="Тяжело">😫</button><button class="mood-btn" data-mood="2" aria-label="Так себе">😕</button><button class="mood-btn" data-mood="3" aria-label="Нормально">🙂</button><button class="mood-btn" data-mood="4" aria-label="Отлично">✨</button>
+          <button class="mood-btn" data-mood="1" aria-label="Очень тяжело">😞</button><button class="mood-btn" data-mood="2" aria-label="Не лучший день">😕</button><button class="mood-btn" data-mood="3" aria-label="Спокойно">😐</button><button class="mood-btn" data-mood="4" aria-label="Нормально">🙂</button><button class="mood-btn" data-mood="5" aria-label="Хорошо">😊</button><button class="mood-btn" data-mood="6" aria-label="Очень хорошо">😌</button><button class="mood-btn" data-mood="7" aria-label="Отлично">🤩</button>
         </div>
       </div>
       <div class="soft-mode">
@@ -996,7 +996,7 @@
     var focus = state.dailyFocus && state.dailyFocus.date===t ? state.dailyFocus.taskId : null;
     var focusSelect=document.getElementById('dailyFocusSelect');
     if(focusSelect){
-      focusSelect.innerHTML='<option value="">Выбери одну вещь, которая важнее всего</option>'+todays.map(function(task){return '<option value="'+task.id+'">'+escapeHtml(task.title)+'</option>';}).join('');
+      focusSelect.innerHTML='<option value="">Выбери главное на сегодня</option>'+todays.map(function(task){return '<option value="'+task.id+'">'+escapeHtml(task.title)+'</option>';}).join('');
       focusSelect.value=focus || '';
       focusSelect.onchange=function(){ state.dailyFocus={date:t,taskId:focusSelect.value||null}; saveState(); renderToday(); };
     }
@@ -1005,7 +1005,7 @@
     var mood=state.dailyMoods[t]||0;
     document.querySelectorAll('#moodOptions .mood-btn').forEach(function(btn){ btn.classList.toggle('selected', +btn.dataset.mood===mood); });
     var moodCaption=document.getElementById('moodCaption');
-    if(moodCaption) moodCaption.textContent=['','тяжёлый день','не лучший день','нормальный день','хороший день'][mood] || 'как ты сегодня?';
+    if(moodCaption) moodCaption.textContent=['','очень тяжёлый день','не лучший день','спокойный день','нормальный день','хороший день','очень хороший день','отличный день'][mood] || 'как ты сегодня?';
     document.querySelectorAll('#moodOptions .mood-btn').forEach(function(btn){ btn.onclick=function(){ state.dailyMoods[t]=+btn.dataset.mood; saveState(); renderToday(); }; });
 
     // Soft mode
@@ -1481,7 +1481,7 @@
     days.forEach(function(k){var ts=state.tasks.filter(function(t){return (t.dueDate||'').slice(0,10)===k;});total+=ts.length;done+=ts.filter(function(t){return t.isCompleted;}).length;if(state.dailyMoods[k]){moodSum+=state.dailyMoods[k];moodCount++;}});
     if(!total){el.textContent='Добавь несколько задач и отметок настроения — и здесь появится первое маленькое наблюдение.';return;}
     var pct=Math.round(done/total*100);
-    el.textContent=moodCount ? 'За 7 дней ты завершила '+done+' из '+total+' задач ('+pct+'%). Средняя отметка состояния — '+(moodSum/moodCount).toFixed(1)+' из 4.' : 'За 7 дней ты завершила '+done+' из '+total+' задач ('+pct+'%). Добавь отметку состояния, чтобы увидеть связь с самочувствием.';
+    el.textContent=moodCount ? 'За 7 дней ты завершила '+done+' из '+total+' задач ('+pct+'%). Средняя отметка состояния — '+(moodSum/moodCount).toFixed(1)+' из 7.' : 'За 7 дней ты завершила '+done+' из '+total+' задач ('+pct+'%). Добавь отметку состояния, чтобы увидеть связь с самочувствием.';
   }
   function openReflection(){
     var now=new Date(), from=new Date(); from.setDate(now.getDate()-6);
