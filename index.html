@@ -6,9 +6,6 @@
 <title>loomiapp</title>
 
 <link rel="manifest" href="manifest.json">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
 <meta name="theme-color" content="#FF6B6B">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -33,7 +30,7 @@
   html, body {
     margin:0; padding:0; height:100%; overscroll-behavior:none;
     background:var(--bg);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+    font-family:var(--loom-font-body);
   }
   #app { position:fixed; inset:0; width:100%; height:100dvh; min-height:100dvh; background:var(--bg); display:flex; flex-direction:column; overflow:hidden; transition: background .3s ease-in-out; }
   @supports not (height: 100dvh) { #app { height:100vh; min-height:100vh; } }
@@ -237,8 +234,8 @@
   .thought-save-btn,.chip-btn{background:var(--text-primary);}
   /* loomiapp design system: one typeface, restrained scale, intentional dark mode */
   :root{
-    --font-ui:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;
-    --font-brand:"Loomi Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    --font-ui:var(--loom-font-body);
+    --font-brand:var(--loom-font-heading);
     --surface:rgba(255,255,255,.70);
     --surface-strong:rgba(255,255,255,.88);
     --surface-muted:rgba(120,130,140,.08);
@@ -249,19 +246,19 @@
     --shadow-soft:0 10px 30px rgba(28,31,36,.055);
     --shadow-lift:0 18px 44px rgba(28,31,36,.085);
   }
-  html,body{font-family:var(--font-ui);font-size:16px;line-height:1.35;}
+  html,body{font-family:var(--loom-font-body);font-size:16px;line-height:1.35;}
   .title{font-size:22px;font-weight:650;letter-spacing:-.025em;}
   .caption{font-size:13px;font-weight:400;}
   .section-label{font-size:13px;letter-spacing:.06em;font-weight:650;}
   .field-label,.task-group-label{font-size:13px;font-weight:500;}
   .task-title{font-size:16px;font-weight:500;}
   .task-time,.progress-caption,.status-pill{font-size:13px;font-weight:400;}
-  .brand-mark{font-family:var(--font-brand);}
+  .brand-mark{font-family:var(--loom-font-heading);}
   .brand-mark{font-size:16px;font-weight:700;letter-spacing:-.055em;}
   .today-number{font-size:24px;font-weight:650;letter-spacing:-.055em;}
   .wheel-score{font-size:24px;font-weight:650;letter-spacing:-.045em;}
   .stat-value{font-size:22px;font-weight:650;letter-spacing:-.03em;}
-  .icon-btn,.avatar,.mood-btn,.soft-toggle,.fab,.tab,.mode-btn,.ws-tab,.reflection-button,.modal-save,.thought-save-btn,.chip-btn{font-family:var(--font-ui);}
+  .icon-btn,.avatar,.mood-btn,.soft-toggle,.fab,.tab,.mode-btn,.ws-tab,.reflection-button,.modal-save,.thought-save-btn,.chip-btn{font-family:var(--loom-font-body);}
   .icon-btn{color:var(--icon);background:var(--surface-strong);}
   .icon-btn svg,.tab svg,.empty svg,.planner-nav svg{stroke:currentColor!important;}
   .tab{color:var(--icon-muted);}
@@ -326,7 +323,7 @@
   /* Canvas uses the same semantic colors as the rest of the app. */
   html[data-theme="dark"] #wheelCanvas{filter:none;}
 
-  .brand-mark{font-family:"Loomi Inter",Inter,Arial,sans-serif;font-weight:700;letter-spacing:-.07em;font-size:16px;color:var(--text-primary);}
+  .brand-mark{font-family:var(--loom-font-heading)!important;font-weight:700;letter-spacing:-.07em;font-size:16px;color:var(--text-primary);}
   .today-focus{margin:12px 20px 0;padding:16px 18px;border-radius:22px;background:var(--surface-strong);border:1px solid var(--line);box-shadow:var(--shadow-soft);}
   .focus-label{font-size:13px;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:var(--text-secondary);}
   .focus-row{display:flex;align-items:center;gap:10px;margin-top:8px;}
@@ -368,8 +365,8 @@
      CSS-only visual system. Existing application logic is untouched.
      ========================================================= */
   :root{
-    --loom-font-body:"Times New Roman",Times,serif;
-    --loom-font-heading:"Loomi Inter",Inter,Arial,sans-serif;
+    --loom-font-body:"Loomi Inter",Inter,sans-serif;
+    --loom-font-heading:"Loomi Montserrat",Montserrat,sans-serif;
     --loom-bg:var(--bg);
     --loom-surface:var(--accent-end);
     --loom-accent:var(--accent-start);
@@ -380,8 +377,10 @@
     --loom-radius:18px;
     --loom-speed:.3s;
   }
-  @font-face{font-family:"Loomi Inter";src:url("fonts/Inter-Italic.otf") format("opentype");font-style:italic;font-weight:400;font-display:swap;}
-  @font-face{font-family:"Loomi Inter";src:url("fonts/Inter-BoldItalic.otf") format("opentype");font-style:italic;font-weight:700;font-display:swap;}
+  @font-face{font-family:"Loomi Inter";src:url("fonts/Inter-Regular.otf") format("opentype");font-style:normal;font-weight:400;font-display:swap;}
+  @font-face{font-family:"Loomi Inter";src:url("fonts/Inter-Bold.otf") format("opentype");font-style:normal;font-weight:700;font-display:swap;}
+  @font-face{font-family:"Loomi Montserrat";src:url("fonts/Montserrat-Regular.otf") format("opentype");font-style:normal;font-weight:400;font-display:swap;}
+  @font-face{font-family:"Loomi Montserrat";src:url("fonts/Montserrat-Bold.otf") format("opentype");font-style:normal;font-weight:700;font-display:swap;}
   html,body,#app{transition:background var(--loom-speed) ease,color var(--loom-speed) ease;}
   html,body{font-family:var(--loom-font-body)!important;font-size:16px!important;line-height:1.35;}
   #app{background:var(--loom-bg)!important;color:var(--loom-ink)!important;}
@@ -391,7 +390,7 @@
   body *{font-size:16px!important;}
   h1,h2,h3,.title,.brand-mark,.today-hero,.today-hero *,.ws-project-name,.modal-title,.reflection-card h3,
   .project-heading,.project-name,[id="wsProjectName"],.glass[data-project-id] > div:nth-child(2) > div:first-child{
-    font-family:var(--loom-font-heading)!important;font-style:italic!important;
+    font-family:var(--loom-font-heading)!important;
   }
   h1,h2,h3,.title,[id="wsProjectName"],.modal-title{font-size:24px!important;font-weight:700!important;line-height:1.1;}
   .brand-mark{font-size:24px!important;font-weight:700!important;}
@@ -399,11 +398,11 @@
   .tab span,.theme-name,.theme-note,.theme-label,.appearance-copy,.focus-label,.mood-label,.insight-kicker,
   .stat-label,.month-weekday,.colordate-btn,.ws-tab,.mode-btn,.priority-dot,.segmented-item,.settings-row label,
   .install-banner .txt,.install-cta,.theme-note{font-size:13px!important;}
-  .today-number,.wheel-score{font-family:var(--loom-font-heading)!important;font-style:italic!important;font-size:24px!important;font-weight:700!important;}
+  .today-number,.wheel-score{font-family:var(--loom-font-heading)!important;font-style:normal!important;font-size:24px!important;font-weight:700!important;}
   .today-number span,.wheel-score small{font-family:var(--loom-font-body)!important;font-style:normal!important;font-size:13px!important;}
   .task-title,.thought-text,.thought-date,.focus-select,.soft-copy strong,.soft-copy span,.insight-text,
   input,select,textarea,button,.stat-value,.day-num,.theme-name,.settings-row label,.empty h3,.empty p{font-family:var(--loom-font-body)!important;font-style:normal!important;font-size:16px!important;}
-  .empty h3{font-family:var(--loom-font-heading)!important;font-style:italic!important;font-size:22px!important;font-weight:700!important;}
+  .empty h3{font-family:var(--loom-font-heading)!important;font-style:normal!important;font-size:22px!important;font-weight:700!important;}
   .stat-value{font-size:16px!important;font-weight:700!important;}
   .tab span,.theme-name,.caption,.field-label,.task-time,.task-group-label,.status-pill,.progress-caption,.theme-note,.appearance-copy,.mood-label,.focus-label,.insight-kicker,.stat-label{font-size:13px!important;}
   .fab{font-size:24px!important;}
@@ -520,6 +519,9 @@
     html:not(:has(#appearanceLight:checked)):not(:has(#appearanceSystem:checked)){color-scheme:dark;}
     html:not(:has(#appearanceLight:checked)):has(#appearanceSystem:checked){color-scheme:dark;}
   }
+  html:has(#appearanceDark:checked),
+  @media (prefers-color-scheme:dark){ }
+
   /* dark palettes: same three semantic roles, one consistent card color */
   html:has(#appearanceDark:checked){--loom-bg:#1C1C1E;--loom-surface:#2C2C2E;}
   @media (prefers-color-scheme:dark){html:has(#appearanceSystem:checked){--loom-bg:#1C1C1E;--loom-surface:#2C2C2E;}}
@@ -556,151 +558,18 @@
   @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition-duration:.01ms!important;animation-duration:.01ms!important;}}
 
 
-  /* loomiapp — soft editorial theme layer */
-  :root{
-    --loom-bg:#FBF7F2;
-    --loom-surface:#F2E8DC;
-    --loom-accent:#C8A17A;
-    --loom-ink:#332E2A;
-    --loom-muted:#82776F;
-    --loom-accent-contrast:#FFFFFF;
-    --loom-line:rgba(75,62,52,.10);
-    --loom-shadow:0 12px 32px rgba(76,60,48,.07);
-    --loom-shadow-lift:0 18px 44px rgba(76,60,48,.10);
-    --loom-blob-a:#E9CDB4;
-    --loom-blob-b:#F0D9D0;
-    --loom-blob-c:#D9E6DF;
-    --loom-blob-d:#E8DDF0;
-    --loom-speed:.3s;
-  }
+  /* v5.1 typography: exactly two families — Montserrat for headings, Inter for everything else. */
+  html,body,#app,button,input,select,textarea{font-family:var(--loom-font-body)!important;font-style:normal!important;}
+  h1,h2,h3,h4,h5,h6,.title,.brand-mark,.today-hero,.today-hero *,.ws-project-name,.modal-title,.reflection-card h3,
+  .project-heading,.project-name,[id="wsProjectName"],.glass[data-project-id] > div:nth-child(2) > div:first-child,
+  .today-number,.wheel-score,.empty h3{font-family:var(--loom-font-heading)!important;font-style:normal!important;}
+  .today-number span,.wheel-score small{font-family:var(--loom-font-body)!important;font-style:normal!important;}
+  .icon-btn,.avatar,.mood-btn,.soft-toggle,.fab,.tab,.mode-btn,.ws-tab,.reflection-button,.modal-save,.thought-save-btn,.chip-btn{font-family:var(--loom-font-body)!important;}
 
-  /* Typography: Montserrat for headings/brand, Inter for everything else. */
-  html,body,#app,.screen,.modal-sheet,#tabbar,#workspaceOverlay,
-  button,input,select,textarea{font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;}
-  h1,h2,h3,.title,.modal-title,.ws-project-name,.brand-mark,
-  .focus-label,.insight-kicker,.appearance-title,.theme-name{
-    font-family:"Montserrat",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
-  }
-  h1,h2,h3,.title{font-size:24px!important;font-weight:700!important;line-height:1.15;letter-spacing:-.025em!important;font-style:normal!important;}
-  .modal-title,.ws-project-name{font-size:22px!important;font-weight:600!important;line-height:1.2;letter-spacing:-.02em!important;}
-  .brand-mark{font-size:22px!important;font-weight:600!important;letter-spacing:-.045em!important;}
-  body,.task-title,.thought-text,.settings-row label,input,select,textarea,button,.stat-value,.day-num,.section-label,.appearance-title{font-size:16px!important;}
-  .caption,.field-label,.task-time,.task-group-label,.status-pill,.progress-caption,.theme-name,.theme-note,.appearance-copy,.stat-label,.tab span,.mood-label,.focus-label,.insight-kicker{font-size:13px!important;}
-  .section-label{font-weight:600!important;text-transform:none!important;letter-spacing:0!important;margin-top:22px!important;}
-  .caption,.field-label,.task-time,.task-group-label,.status-pill,.progress-caption,.theme-note,.appearance-copy,.stat-label{font-family:"Inter",sans-serif!important;font-weight:400!important;}
-
-  /* Soft 60/30/10 palette roles. */
-  #app,.screen,#workspaceOverlay,.modal-sheet{background:var(--loom-bg)!important;color:var(--loom-ink)!important;}
-  .glass,.task-card,.thought-card,.reflection-stat,.today-hero,.focus-card,.soft-card,.insight-card,.stat-card,
-  .appearance-card,.ws-tab,.icon-btn,.theme-circle,.install-banner{background:var(--loom-surface)!important;border-color:var(--loom-line)!important;box-shadow:var(--loom-shadow)!important;}
-  .glass{backdrop-filter:blur(22px)!important;-webkit-backdrop-filter:blur(22px)!important;}
-  .task-row+.task-row{border-top-color:var(--loom-line)!important;}
-  .task-title,.thought-text,.settings-row label,.stat-value,.day-num,.modal-title,.title,.section-label,.ws-project-name,.appearance-title{color:var(--loom-ink)!important;}
-  .caption,.task-time,.task-group-label,.field-label,.status-pill,.progress-caption,.theme-name,.theme-note,.appearance-copy,.stat-label{color:var(--loom-muted)!important;}
-  .progress-track{background:color-mix(in srgb,var(--loom-surface) 72%,var(--loom-bg))!important;}
-  .progress-fill,.checkbox.done,.fab,.modal-save,.chip-btn,.thought-save-btn,.tab.active,.ws-tab.active,.mode-btn.active,.day-num.selected,.priority-dot.selected,.segmented-item.selected{background:var(--loom-accent)!important;color:var(--loom-accent-contrast)!important;}
-  .progress-fill{box-shadow:none!important;}
-  .tab,.tab svg,.empty svg,.icon-btn svg{color:var(--loom-muted)!important;stroke:currentColor!important;}
-  .tab.active,.tab.active svg{color:var(--loom-accent)!important;stroke:var(--loom-accent)!important;}
-  .icon-btn{color:var(--loom-ink)!important;}
-  .icon-btn svg{color:var(--loom-ink)!important;}
-  .fab{box-shadow:0 12px 28px color-mix(in srgb,var(--loom-accent) 28%,transparent)!important;}
-  .checkbox{border-color:var(--loom-muted)!important;}
-  .checkbox.done{border-color:var(--loom-accent)!important;}
-  .checkbox.done svg{stroke:var(--loom-accent-contrast)!important;}
-  .slider-el{background:color-mix(in srgb,var(--loom-surface) 70%,var(--loom-bg))!important;}
-  .slider-el:before{background:var(--loom-bg)!important;}
-  input:checked+.slider-el{background:var(--loom-accent)!important;}
-  input[type=text],input[type=search],select,input[type=date],input[type=time],textarea{background:var(--loom-bg)!important;color:var(--loom-ink)!important;border-color:var(--loom-line)!important;}
-  input::placeholder,textarea::placeholder{color:var(--loom-muted)!important;opacity:.8;}
-  .modal-save.secondary{background:var(--loom-surface)!important;color:var(--loom-ink)!important;}
-  .modal-save.danger{background:#A85A53!important;color:#fff!important;}
-  #tabbar{background:color-mix(in srgb,var(--loom-surface) 92%,transparent)!important;border-top:1px solid var(--loom-line)!important;backdrop-filter:blur(22px)!important;-webkit-backdrop-filter:blur(22px)!important;}
-  .avatar{background:var(--loom-surface)!important;color:var(--loom-ink)!important;border-color:var(--loom-line)!important;box-shadow:var(--loom-shadow)!important;}
-  .task-title.done{color:var(--loom-muted)!important;}
-  .theme-circle{border-color:var(--loom-line)!important;}
-  .theme-circle.selected{box-shadow:0 0 0 2px var(--loom-accent)!important;}
-  .theme-circle .dot{background:var(--loom-accent)!important;}
-  .accent-row{display:none!important;}
-
-  /* Gentle palette set — selected swatch controls the whole app. */
-  html:has(#themeRow .theme-swatch:nth-child(1) .theme-circle.selected){--loom-bg:#FBF7F2 !important;--loom-surface:#F2E8DC !important;--loom-accent:#C8A17A !important;--loom-ink:#332E2A !important;--loom-muted:#82776F !important;--loom-blob-a:#E9CDB4 !important;--loom-blob-b:#F0D9D0 !important;--loom-blob-c:#DDE8E2 !important;--loom-blob-d:#E9E0F0 !important;}
-  html:has(#themeRow .theme-swatch:nth-child(2) .theme-circle.selected){--loom-bg:#F3F8F5 !important;--loom-surface:#E3EEE8 !important;--loom-accent:#7FA89A !important;--loom-ink:#2D3732 !important;--loom-muted:#73817B !important;--loom-blob-a:#CFE4DA !important;--loom-blob-b:#DDEBE6 !important;--loom-blob-c:#D4E3F0 !important;--loom-blob-d:#E6DFEF !important;}
-  html:has(#themeRow .theme-swatch:nth-child(3) .theme-circle.selected){--loom-bg:#F7F3F8 !important;--loom-surface:#EBE3EE !important;--loom-accent:#A99ABD !important;--loom-ink:#342F38 !important;--loom-muted:#7D7482 !important;--loom-blob-a:#E1D5E9 !important;--loom-blob-b:#EADDE8 !important;--loom-blob-c:#DCE9E3 !important;--loom-blob-d:#D9D7ED !important;}
-  html:has(#themeRow .theme-swatch:nth-child(4) .theme-circle.selected){--loom-bg:#FFF5F0 !important;--loom-surface:#F8E3D9 !important;--loom-accent:#D99A7A !important;--loom-ink:#3B302B !important;--loom-muted:#806E65 !important;--loom-blob-a:#F2CDBD !important;--loom-blob-b:#F6DDD4 !important;--loom-blob-c:#E6E0D8 !important;--loom-blob-d:#EBD9E7 !important;}
-  html:has(#themeRow .theme-swatch:nth-child(5) .theme-circle.selected){--loom-bg:#FAF7F0 !important;--loom-surface:#EEE6D5 !important;--loom-accent:#C6A46A !important;--loom-ink:#39342B !important;--loom-muted:#7D7567 !important;--loom-blob-a:#E9D9B7 !important;--loom-blob-b:#EFE3CE !important;--loom-blob-c:#E0E7DF !important;--loom-blob-d:#E9DFE7 !important;}
-  html:has(#themeRow .theme-swatch:nth-child(6) .theme-circle.selected){--loom-bg:#EEF7F6 !important;--loom-surface:#DDEBEA !important;--loom-accent:#6E9FA0 !important;--loom-ink:#2C3B3B !important;--loom-muted:#6F8180 !important;--loom-blob-a:#C8E0DF !important;--loom-blob-b:#D8EAE5 !important;--loom-blob-c:#D7E2EF !important;--loom-blob-d:#E4DCE7 !important;}
-  html:has(#themeRow .theme-swatch:nth-child(7) .theme-circle.selected){--loom-bg:#F8EEF2 !important;--loom-surface:#EEDFE6 !important;--loom-accent:#A96D86 !important;--loom-ink:#3A2F35 !important;--loom-muted:#7D6D75 !important;--loom-blob-a:#E7C9D5 !important;--loom-blob-b:#F0D9DE !important;--loom-blob-c:#DCE7E0 !important;--loom-blob-d:#E5D9EB !important;}
-
-  /* Dark companions: soft, deep and intentionally uniform. */
-  @media (prefers-color-scheme:dark){
-    html:has(#appearanceSystem:checked) .theme-circle{filter:none!important;}
-  }
-  html:has(#appearanceDark:checked){ }
-  @media (prefers-color-scheme:dark){html:has(#appearanceSystem:checked){}}
-
-  html:has(#appearanceDark:checked):has(#themeRow .theme-swatch:nth-child(1) .theme-circle.selected){--loom-bg:#201D1A !important;--loom-surface:#2B2622 !important;--loom-accent:#D6B08A !important;--loom-ink:#F4ECE4 !important;--loom-muted:#B7AAA0 !important;--loom-blob-a:#5B4133 !important;--loom-blob-b:#513B43 !important;--loom-blob-c:#31443D !important;--loom-blob-d:#44394E !important;}
-  html:has(#appearanceDark:checked):has(#themeRow .theme-swatch:nth-child(2) .theme-circle.selected){--loom-bg:#1B211F !important;--loom-surface:#28302C !important;--loom-accent:#91B9AA !important;--loom-ink:#EEF5F1 !important;--loom-muted:#AEBBB5 !important;--loom-blob-a:#2E5146 !important;--loom-blob-b:#35514B !important;--loom-blob-c:#2D3D52 !important;--loom-blob-d:#44384E !important;}
-  html:has(#appearanceDark:checked):has(#themeRow .theme-swatch:nth-child(3) .theme-circle.selected){--loom-bg:#211E23 !important;--loom-surface:#2D2830 !important;--loom-accent:#BCA9CF !important;--loom-ink:#F4EEF7 !important;--loom-muted:#B8AEBB !important;--loom-blob-a:#4A3D52 !important;--loom-blob-b:#4A3842 !important;--loom-blob-c:#30463D !important;--loom-blob-d:#3B3B57 !important;}
-  html:has(#appearanceDark:checked):has(#themeRow .theme-swatch:nth-child(4) .theme-circle.selected){--loom-bg:#241E1B !important;--loom-surface:#302723 !important;--loom-accent:#E0A58B !important;--loom-ink:#F8EEE9 !important;--loom-muted:#BBA9A1 !important;--loom-blob-a:#5B3C30 !important;--loom-blob-b:#553E45 !important;--loom-blob-c:#38403A !important;--loom-blob-d:#493849 !important;}
-  html:has(#appearanceDark:checked):has(#themeRow .theme-swatch:nth-child(5) .theme-circle.selected){--loom-bg:#211F1A !important;--loom-surface:#2E2A22 !important;--loom-accent:#D7B97C !important;--loom-ink:#F4F0E7 !important;--loom-muted:#B8B09F !important;--loom-blob-a:#51462E !important;--loom-blob-b:#4D4030 !important;--loom-blob-c:#334038 !important;--loom-blob-d:#473C4A !important;}
-  html:has(#appearanceDark:checked):has(#themeRow .theme-swatch:nth-child(6) .theme-circle.selected){--loom-bg:#1B2222 !important;--loom-surface:#273130 !important;--loom-accent:#8BB7B8 !important;--loom-ink:#EEF6F6 !important;--loom-muted:#AEBFC0 !important;--loom-blob-a:#315553 !important;--loom-blob-b:#2E4D4B !important;--loom-blob-c:#334255 !important;--loom-blob-d:#493C4B !important;}
-  html:has(#appearanceDark:checked):has(#themeRow .theme-swatch:nth-child(7) .theme-circle.selected){--loom-bg:#241D22 !important;--loom-surface:#30262D !important;--loom-accent:#C98BA3 !important;--loom-ink:#F7EDF2 !important;--loom-muted:#BBAAB2 !important;--loom-blob-a:#553441 !important;--loom-blob-b:#4E3740 !important;--loom-blob-c:#30463E !important;--loom-blob-d:#44394E !important;}
-
-  /* System dark mode mirrors the same palettes without changing JS. */
-  @media (prefers-color-scheme:dark){
-    html:has(#appearanceSystem:checked):has(#themeRow .theme-swatch:nth-child(1) .theme-circle.selected){--loom-bg:#201D1A !important;--loom-surface:#2B2622 !important;--loom-accent:#D6B08A !important;--loom-ink:#F4ECE4 !important;--loom-muted:#B7AAA0 !important;--loom-blob-a:#5B4133 !important;--loom-blob-b:#513B43 !important;--loom-blob-c:#31443D !important;--loom-blob-d:#44394E !important;}
-    html:has(#appearanceSystem:checked):has(#themeRow .theme-swatch:nth-child(2) .theme-circle.selected){--loom-bg:#1B211F !important;--loom-surface:#28302C !important;--loom-accent:#91B9AA !important;--loom-ink:#EEF5F1 !important;--loom-muted:#AEBBB5 !important;--loom-blob-a:#2E5146 !important;--loom-blob-b:#35514B !important;--loom-blob-c:#2D3D52 !important;--loom-blob-d:#44384E !important;}
-    html:has(#appearanceSystem:checked):has(#themeRow .theme-swatch:nth-child(3) .theme-circle.selected){--loom-bg:#211E23 !important;--loom-surface:#2D2830 !important;--loom-accent:#BCA9CF !important;--loom-ink:#F4EEF7 !important;--loom-muted:#B8AEBB !important;--loom-blob-a:#4A3D52 !important;--loom-blob-b:#4A3842 !important;--loom-blob-c:#30463D !important;--loom-blob-d:#3B3B57 !important;}
-    html:has(#appearanceSystem:checked):has(#themeRow .theme-swatch:nth-child(4) .theme-circle.selected){--loom-bg:#241E1B !important;--loom-surface:#302723 !important;--loom-accent:#E0A58B !important;--loom-ink:#F8EEE9 !important;--loom-muted:#BBA9A1 !important;--loom-blob-a:#5B3C30 !important;--loom-blob-b:#553E45 !important;--loom-blob-c:#38403A !important;--loom-blob-d:#493849 !important;}
-    html:has(#appearanceSystem:checked):has(#themeRow .theme-swatch:nth-child(5) .theme-circle.selected){--loom-bg:#211F1A !important;--loom-surface:#2E2A22 !important;--loom-accent:#D7B97C !important;--loom-ink:#F4F0E7 !important;--loom-muted:#B8B09F !important;--loom-blob-a:#51462E !important;--loom-blob-b:#4D4030 !important;--loom-blob-c:#334038 !important;--loom-blob-d:#473C4A !important;}
-    html:has(#appearanceSystem:checked):has(#themeRow .theme-swatch:nth-child(6) .theme-circle.selected){--loom-bg:#1B2222 !important;--loom-surface:#273130 !important;--loom-accent:#8BB7B8 !important;--loom-ink:#EEF6F6 !important;--loom-muted:#AEBFC0 !important;--loom-blob-a:#315553 !important;--loom-blob-b:#2E4D4B !important;--loom-blob-c:#334255 !important;--loom-blob-d:#493C4B !important;}
-    html:has(#appearanceSystem:checked):has(#themeRow .theme-swatch:nth-child(7) .theme-circle.selected){--loom-bg:#241D22 !important;--loom-surface:#30262D !important;--loom-accent:#C98BA3 !important;--loom-ink:#F7EDF2 !important;--loom-muted:#BBAAB2 !important;--loom-blob-a:#553441 !important;--loom-blob-b:#4E3740 !important;--loom-blob-c:#30463E !important;--loom-blob-d:#44394E !important;}
-  }
-
-  /* Pinterest-style ambient blobs: large, soft, clipped behind the UI. */
-  .ambient-blobs{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;}
-  .blob{position:absolute;display:block;border-radius:52% 48% 62% 38% / 45% 58% 42% 55%;filter:blur(60px);opacity:.28;mix-blend-mode:multiply;will-change:transform;transition:background var(--loom-speed) ease,opacity var(--loom-speed) ease;}
-  .blob-a{width:280px;height:230px;right:-100px;top:60px;background:var(--loom-blob-a);transform:rotate(16deg);}
-  .blob-b{width:320px;height:260px;left:-150px;top:28%;background:var(--loom-blob-b);transform:rotate(-18deg);}
-  .blob-c{width:250px;height:220px;right:-90px;bottom:22%;background:var(--loom-blob-c);transform:rotate(-28deg);}
-  .blob-d{width:300px;height:230px;left:-130px;bottom:-60px;background:var(--loom-blob-d);transform:rotate(20deg);}
-  @media (prefers-color-scheme:dark){html:has(#appearanceSystem:checked) .blob{mix-blend-mode:screen;opacity:.16;}}
-  html:has(#appearanceDark:checked) .blob{mix-blend-mode:screen;opacity:.16 !important;}
-  #screens,#tabbar,#workspaceOverlay,.fab,.modal-backdrop,#androidInstallBanner,#iosInstallBanner{position:relative;z-index:2;}
-  #tabbar,.fab{z-index:100;}
-  .modal-backdrop{z-index:200;}
-
-  /* Calm geometry: fewer visual effects, consistent surfaces. */
-  .glass,.task-card,.thought-card,.today-hero,.focus-card,.soft-card,.insight-card,.stat-card{border-radius:20px!important;}
-  .today-hero{box-shadow:var(--loom-shadow-lift)!important;}
-  .today-hero:after{display:none!important;}
-  .tab{gap:3px!important;}
-  .tab svg{width:21px!important;height:21px!important;stroke-width:1.7!important;}
-  .fab{width:54px!important;height:54px!important;border-radius:18px!important;font-size:22px!important;}
-  .modal-sheet{border-radius:22px 22px 0 0!important;}
-  .theme-row{gap:12px!important;padding-top:4px!important;}
-  .theme-circle{width:42px!important;height:42px!important;}
-  .theme-circle .dot{width:9px!important;height:9px!important;}
-
-  /* Replace the old harsh swatch colors with the same gentle palette preview. */
-  #themeRow .theme-swatch:nth-child(1) .theme-circle{background:linear-gradient(145deg,#FBF7F2 0 70%,#F2E8DC 70%)!important;} #themeRow .theme-swatch:nth-child(1) .dot{background:#C8A17A!important;}
-  #themeRow .theme-swatch:nth-child(2) .theme-circle{background:linear-gradient(145deg,#F3F8F5 0 70%,#E3EEE8 70%)!important;} #themeRow .theme-swatch:nth-child(2) .dot{background:#7FA89A!important;}
-  #themeRow .theme-swatch:nth-child(3) .theme-circle{background:linear-gradient(145deg,#F7F3F8 0 70%,#EBE3EE 70%)!important;} #themeRow .theme-swatch:nth-child(3) .dot{background:#A99ABD!important;}
-  #themeRow .theme-swatch:nth-child(4) .theme-circle{background:linear-gradient(145deg,#FFF5F0 0 70%,#F8E3D9 70%)!important;} #themeRow .theme-swatch:nth-child(4) .dot{background:#D99A7A!important;}
-  #themeRow .theme-swatch:nth-child(5) .theme-circle{background:linear-gradient(145deg,#FAF7F0 0 70%,#EEE6D5 70%)!important;} #themeRow .theme-swatch:nth-child(5) .dot{background:#C6A46A!important;}
-  #themeRow .theme-swatch:nth-child(6) .theme-circle{background:linear-gradient(145deg,#EEF7F6 0 70%,#DDEBEA 70%)!important;} #themeRow .theme-swatch:nth-child(6) .dot{background:#6E9FA0!important;}
-  #themeRow .theme-swatch:nth-child(7) .theme-circle{background:linear-gradient(145deg,#F8EEF2 0 70%,#EEDFE6 70%)!important;} #themeRow .theme-swatch:nth-child(7) .dot{background:#A96D86!important;}
 </style>
 </head>
 <body>
 <div id="app">
-  <div class="ambient-blobs" aria-hidden="true">
-    <span class="blob blob-a"></span>
-    <span class="blob blob-b"></span>
-    <span class="blob blob-c"></span>
-    <span class="blob blob-d"></span>
-  </div>
   <div id="androidInstallBanner" class="glass install-banner">
     <img src="icons/icon-192.png" alt="">
     <div class="txt">Установите «loomiapp» на телефон — работает офлайн, как обычное приложение.</div>
@@ -1732,12 +1601,12 @@
     var avg=state.wheelSectors.reduce(function(sum,s){return sum+s.value;},0)/n;
     var avgEl=document.getElementById('wheelAverage'); if(avgEl) avgEl.innerHTML=avg.toFixed(1)+'<small>/ 10</small>';
     ctx.fillStyle=primary;
-    ctx.font='650 18px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
+    ctx.font='650 18px "Loomi Inter",Inter,sans-serif';
     ctx.textAlign='center';
     ctx.textBaseline='middle';
     ctx.fillText(avg.toFixed(1),cx,cy-2);
     ctx.fillStyle=textColor;
-    ctx.font='10px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
+    ctx.font='10px "Loomi Inter",Inter,sans-serif';
     ctx.fillText('среднее',cx,cy+13);
 
     // Labels with collision-safe distance
@@ -1747,7 +1616,7 @@
       var lx=cx+Math.cos(mid)*labelR;
       var ly=cy+Math.sin(mid)*labelR;
       ctx.fillStyle=textColor;
-      ctx.font='500 11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
+      ctx.font='500 11px "Loomi Inter",Inter,sans-serif';
       ctx.textAlign=lx<cx-8?'right':(lx>cx+8?'left':'center');
       ctx.textBaseline='middle';
       var name=sec.name.length>13 ? sec.name.slice(0,12)+'…' : sec.name;
