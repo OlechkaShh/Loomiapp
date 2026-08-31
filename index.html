@@ -566,6 +566,82 @@
   .today-number span,.wheel-score small{font-family:var(--loom-font-body)!important;font-style:normal!important;}
   .icon-btn,.avatar,.mood-btn,.soft-toggle,.fab,.tab,.mode-btn,.ws-tab,.reflection-button,.modal-save,.thought-save-btn,.chip-btn{font-family:var(--loom-font-body)!important;}
 
+
+  /* Small targeted polish: mood heading, emoji alignment, and a calmer dark surface system. */
+  .mood-label{
+    font-family:var(--loom-font-heading)!important;
+    font-size:13px!important;
+    font-weight:700!important;
+    line-height:1.2!important;
+    letter-spacing:.12em!important;
+    text-transform:uppercase!important;
+    color:var(--loom-ink)!important;
+  }
+  .mood-options{
+    display:grid!important;
+    grid-template-columns:repeat(7,minmax(0,1fr));
+    gap:6px!important;
+    align-items:center;
+    width:100%;
+  }
+  .mood-btn{
+    width:100%!important;
+    height:34px!important;
+    min-width:0!important;
+    padding:0!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    text-align:center!important;
+    line-height:1!important;
+    font-size:16px!important;
+    box-sizing:border-box!important;
+  }
+  html[data-theme="dark"] .mood-card,
+  html[data-theme="dark"] .today-focus,
+  html[data-theme="dark"] .soft-mode,
+  html[data-theme="dark"] .reflection-card,
+  html[data-theme="dark"] .insight-card,
+  html[data-theme="dark"] .stat-row,
+  html[data-theme="dark"] .wheel-card,
+  html[data-theme="dark"] .task-card,
+  html[data-theme="dark"] .glass,
+  html[data-theme="dark"] .today-hero,
+  html[data-theme="dark"] .thought-card,
+  html[data-theme="dark"] .appearance-card,
+  html[data-theme="dark"] .install-banner,
+  html[data-theme="dark"] .icon-btn,
+  html[data-theme="dark"] .avatar,
+  html[data-theme="dark"] .modal-sheet{
+    background:var(--loom-surface)!important;
+    color:var(--loom-ink)!important;
+    border-color:var(--loom-line)!important;
+  }
+  html[data-theme="dark"] .mood-btn{
+    background:var(--loom-bg)!important;
+    color:var(--loom-ink)!important;
+    border-color:var(--loom-line)!important;
+  }
+  html[data-theme="dark"] .mood-btn.selected{
+    background:var(--loom-accent)!important;
+    color:var(--loom-accent-contrast)!important;
+    border-color:var(--loom-accent)!important;
+  }
+  html[data-theme="dark"] input[type=text],
+  html[data-theme="dark"] input[type=search],
+  html[data-theme="dark"] select,
+  html[data-theme="dark"] input[type=date],
+  html[data-theme="dark"] input[type=time],
+  html[data-theme="dark"] textarea{
+    background:var(--loom-bg)!important;
+    color:var(--loom-ink)!important;
+    border-color:var(--loom-line)!important;
+  }
+  @media(max-width:520px){
+    .mood-options{gap:4px!important;}
+    .mood-btn{height:34px!important;font-size:15px!important;}
+  }
+
 </style>
 </head>
 <body>
